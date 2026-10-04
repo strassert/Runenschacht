@@ -51,7 +51,7 @@ Gesamt: **86 Schritte**.
 - [x] 4.1 – Renderer, Koordinaten, Vorschau-Harness
 - [x] 4.2 – Kamera-Rig
 - [x] 4.3 – Licht, Himmel, Nebel
-- [ ] 4.4 – Prozedurale Texturen (Canvas)
+- [x] 4.4 – Prozedurale Texturen (Canvas)
 - [ ] 4.5 – Brücke (TrackView)
 - [ ] 4.6 – Soldatenmodell und SquadView
 - [ ] 4.7 – Gegnerhorde (EnemyView)
