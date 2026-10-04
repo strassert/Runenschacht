@@ -12,3 +12,6 @@ Jede Abweichung vom Plan wird hier eingetragen – auch Balancing-Änderungen an
 | 2026-10-04 | 4.8 | `@fontsource/lilita-one` schon in Phase 4 installiert | Label-Texturen brauchen die Schrift |
 | 2026-10-04 | 8.2 | Balancing-Mindestdauer 25 s statt 30 s (Level 1 ist 190 m lang, ≈ 27 s Laufzeit) | Level 1 ist bewusst kurz |
 | 2026-10-04 | 8.2 | Horden-Anzahl und Karten-HP der Level 2–10 skaliert (Faktoren L2 0.9, L3 0.6, L4 0.45, L5 0.35, L6 0.55, L7 0.75, L8 0.3, L9 0.75, L10 0.55); Boss-HP monoton: 600 / 1000 / 1500 / 2200 / 3000 / 4200 / 5600 / 7200 / 9000 / 12000 | Der Bot mit erwarteten Upgrades verlor die Level 3–10 mit den Ausgangswerten (Peak nur 25–40 Soldaten vor der ersten Horde) |
+| 2026-10-04 | 9.3 | Playwright (neueste Version) nutzt in der Cloud-Umgebung das vorhandene Chromium über `PW_CHROMIUM_PATH` (`/opt/pw-browsers/chromium-1194/chrome-linux/chrome`); `scripts/shot.mjs` für Screenshots | Vorinstallierte Browserversion passt nicht zur Playwright-Version, `playwright install` ist dort verboten |
+| 2026-10-04 | 9.5 | PNG-Icons mit `scripts/make-icons.mjs` aus `public/icon.svg` erzeugt und committet; Lighthouse nicht ausgeführt (kein Zugriff) | Plan sieht einmalige lokale Erzeugung vor |
+

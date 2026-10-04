@@ -105,7 +105,7 @@ Gesamt: **86 Schritte**.
 - [x] 9.2 – Performance-Durchgang
 - [x] 9.3 – E2E-Smoke-Test mit Playwright
 - [x] 9.4 – Deployment auf GitHub Pages
-- [ ] 9.5 – PWA (Meilenstein M5)
+- [x] 9.5 – PWA (Meilenstein M5)
 
 ## Phase 10 – UI/UX-Verbesserung (M6)  ([phase-10-ui-ux-polish.md](phase-10-ui-ux-polish.md))
 

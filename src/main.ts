@@ -7,3 +7,9 @@ const params = parseDebugParams(location.search);
 const app = new App(document.getElementById('app')!, params);
 if (params.debug || import.meta.env.DEV) installDebugApi(app);
 void app.boot();
+
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => undefined);
+  });
+}
