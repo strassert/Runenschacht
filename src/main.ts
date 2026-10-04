@@ -1,6 +1,10 @@
 import * as THREE from 'three';
 import { Renderer } from './render/Renderer';
 import { simToThree } from './render/coords';
+import { CameraRig } from './render/CameraRig';
+import { Lighting } from './render/Lighting';
+import { applyFog, createSky } from './render/Sky';
+import { TrackView } from './render/views/TrackView';
 import { Simulation } from './core/simulation';
 import { Bot } from './core/bot';
 import { getLevel } from './core/level/levels';
@@ -12,23 +16,31 @@ style.textContent = `html, body, #app { margin: 0; height: 100%; overflow: hidde
 #game-canvas { display: block; width: 100%; height: 100%; }`;
 document.head.appendChild(style);
 
+const params = new URLSearchParams(location.search);
+const startZ = Number(params.get('z') ?? 0);
 const canvas = document.getElementById('game-canvas') as HTMLCanvasElement;
-const r = new Renderer({ canvas, maxPixelRatio: 2, shadows: false, antialias: true });
-r.scene.background = new THREE.Color(0x87a7c4);
+const r = new Renderer({ canvas, maxPixelRatio: 2, shadows: true, antialias: true });
+const rig = new CameraRig(r.camera);
+r.onResize((w, h) => rig.setAspect(w / h));
+const lighting = new Lighting(true);
+r.scene.add(lighting.root);
+const sky = createSky(lighting.sunDirection);
+r.scene.add(sky);
+applyFog(r.scene);
 
-const ground = new THREE.Mesh(new THREE.BoxGeometry(12, 0.5, 400), new THREE.MeshNormalMaterial());
-ground.position.set(0, -0.25, -190);
-r.scene.add(ground);
+const level = getLevel(1)!;
+r.scene.add(new TrackView(level).root);
 const marker = new THREE.Mesh(
   new THREE.BoxGeometry(1, 1, 1),
   new THREE.MeshBasicMaterial({ color: 0x2f6bff }),
 );
+marker.castShadow = true;
 r.scene.add(marker);
 
-const sim = new Simulation(getLevel(1)!);
+const sim = new Simulation(level);
 const bot = new Bot();
 sim.start();
-const v = new THREE.Vector3();
+sim.world.squad.z = startZ;
 let acc = 0;
 let last = performance.now();
 
@@ -44,8 +56,9 @@ function frame(now: number): void {
   }
   const s = sim.world.squad;
   simToThree(s.x, 0.5, s.z, marker.position);
-  simToThree(s.x, 10, s.z - 12, r.camera.position);
-  r.camera.lookAt(simToThree(s.x, 0, s.z + 10, v));
+  rig.update(sim.world, dt);
+  lighting.update(sim.world);
+  sky.position.copy(r.camera.position);
   r.render();
   requestAnimationFrame(frame);
 }
