@@ -32,7 +32,7 @@ Gesamt: **86 Schritte**.
 
 ## Phase 3 – Simulation (M1)  ([phase-3-simulation.md](phase-3-simulation.md))
 
-- [ ] 3.1 – Welt erzeugen und Welt-Helfer
+- [x] 3.1 – Welt erzeugen und Welt-Helfer
 - [ ] 3.2 – Truppbewegung
 - [ ] 3.3 – Bonus-Blöcke einsammeln
 - [ ] 3.4 – Tore
