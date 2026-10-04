@@ -1,5 +1,5 @@
 import type { Rng } from './rng';
-import type { SimEvent } from './events';
+import type { SimEvent, SoldierChangeReason } from './events';
 import type { LevelDef } from './level/types';
 import type { BulletPool } from './pools/BulletPool';
 import type { EnemyPool } from './pools/EnemyPool';
@@ -107,6 +107,8 @@ export interface WorldStats {
   soldiersGained: number;
   damageDealt: number;
   shotsFired: number;
+  /** Grund des letzten Soldatenverlusts (für die Niederlage-Ursache) */
+  lastLossReason: SoldierChangeReason | null;
 }
 
 export interface WorldState {

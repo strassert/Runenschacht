@@ -1,7 +1,7 @@
 import { generateEndlessLevel } from '../core/level/generator';
 import type { LevelDef } from '../core/level/types';
 import { LEVEL_COUNT, getLevel } from '../core/level/levels';
-import { modifiersFromUpgrades } from '../core/upgrades';
+import { canAffordAny, modifiersFromUpgrades } from '../core/upgrades';
 import { InputController } from '../input/InputController';
 import { SaveManager, type Settings } from '../persistence/SaveManager';
 import { CameraRig } from '../render/CameraRig';
@@ -80,7 +80,6 @@ export class App {
   private governor: AutoQualityGovernor | null = null;
   private timeScale = 1;
   private fpsMeter: FpsMeter | null = null;
-  private lastResultInfo: { progress: number } = { progress: 0 };
 
   constructor(
     root: HTMLElement,
@@ -158,6 +157,7 @@ export class App {
       retry: () => this.startLevel(this.currentLevelId),
       menu: () => this.goMenu(),
       shop: () => this.openShop(),
+      sound: (name, pitch) => this.audio.play(name, { pitch }),
     });
     this.shop = new ShopScreen({
       buy: (id) => this.save.buyUpgrade(id),
@@ -375,6 +375,7 @@ export class App {
     const lvl = getLevel(next);
     this.menu.setNextLevel(`Level ${next}${lvl ? ` · ${lvl.name}` : ''}`);
     this.menu.setCoins(this.save.data.coins);
+    this.menu.setShopDot(canAffordAny(this.save.data.coins, this.save.data.upgrades));
     this.ui.show('menu');
   }
 
@@ -500,15 +501,17 @@ export class App {
     const s = this.session;
     if (!s) return;
     const result = s.sim.getResult();
+    const prevBest = this.save.data.levelBestProgress[String(this.currentLevelId)] ?? 0;
     const { newBestStars } = this.save.applyResult(result);
     this.input.enabled = false;
     this.goTo('result');
-    this.lastResultInfo = { progress: s.world.squad.z / s.world.arenaZ };
     this.result.showResult(result, {
       hasNextLevel: result.victory && (this.isEndless() || this.currentLevelId < LEVEL_COUNT),
       newBestStars,
       totalCoins: this.save.data.coins,
-      progress: this.lastResultInfo.progress,
+      progress: result.progress,
+      bestProgress: prevBest,
+      shopAffordable: canAffordAny(this.save.data.coins, this.save.data.upgrades),
       endless: this.isEndless()
         ? { round: this.currentLevelId - 1000, best: this.save.data.stats.bestEndlessRound }
         : null,

@@ -46,4 +46,15 @@ describe('scoring', () => {
     const r = computeResult(w);
     expect(r.coins).toBe(Math.floor((8 + 50 + 10) * 1.5));
   });
+  it('maps the last loss reason to a defeat cause and records progress', () => {
+    const w = createWorld(makeTestLevel({ arenaZ: 200 }));
+    w.phase = 'defeat';
+    w.squad.z = 50;
+    w.stats.lastLossReason = 'boss';
+    const r = computeResult(w);
+    expect(r.defeatCause).toBe('boss');
+    expect(r.progress).toBeCloseTo(0.25, 5);
+    w.phase = 'victory';
+    expect(computeResult(w).defeatCause).toBeNull();
+  });
 });

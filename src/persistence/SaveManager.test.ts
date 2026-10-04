@@ -24,6 +24,8 @@ const win = (over: Partial<RunResult> = {}): RunResult => ({
   enemiesKilled: 200,
   blocksCollected: 10,
   timeSeconds: 40,
+  progress: 1,
+  defeatCause: null,
   ...over,
 });
 
@@ -70,6 +72,12 @@ describe('SaveManager', () => {
     const r = m.applyResult(win({ stars: 1 }));
     expect(r.newBestStars).toBe(false);
     expect(m.data.levelStars['1']).toBe(3);
+  });
+  it('keeps the best progress per level', () => {
+    const m = new SaveManager(fakeStorage());
+    m.applyResult(win({ victory: false, stars: 0, progress: 0.4, defeatCause: 'horde' }));
+    m.applyResult(win({ victory: false, stars: 0, progress: 0.2, defeatCause: 'wall' }));
+    expect(m.data.levelBestProgress['1']).toBeCloseTo(0.4, 5);
   });
   it('applies a defeat: coins but no unlock', () => {
     const m = new SaveManager(fakeStorage());

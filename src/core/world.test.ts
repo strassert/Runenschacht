@@ -30,6 +30,12 @@ describe('world', () => {
     expect(changeSoldiers(w, 0, 'block')).toBe(0);
     expect(w.events.length).toBe(0);
   });
+  it('remembers the last loss reason', () => {
+    const w = createWorld(getLevel(1)!);
+    changeSoldiers(w, -2, 'wall');
+    changeSoldiers(w, 5, 'block');
+    expect(w.stats.lastLossReason).toBe('wall');
+  });
   it('tracks peak count', () => {
     const w = createWorld(getLevel(1)!);
     changeSoldiers(w, 50, 'block');

@@ -101,6 +101,7 @@ export function createWorld(level: LevelDef, modifiers: RunModifiers = DEFAULT_M
       soldiersGained: 0,
       damageDealt: 0,
       shotsFired: 0,
+      lastLossReason: null,
     },
     events: [],
   };
@@ -134,7 +135,10 @@ export function changeSoldiers(world: WorldState, delta: number, reason: Soldier
   const actual = s.count - before;
   if (actual === 0) return 0;
   if (actual > 0) world.stats.soldiersGained += actual;
-  else world.stats.soldiersLost -= actual;
+  else {
+    world.stats.soldiersLost -= actual;
+    world.stats.lastLossReason = reason;
+  }
   refreshFormation(world);
   emit(world, { type: 'soldiersChanged', delta: actual, count: s.count, reason, x: s.x, z: s.z });
   return actual;

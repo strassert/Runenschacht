@@ -57,3 +57,11 @@ export function modifiersFromUpgrades(levels: UpgradeLevels): RunModifiers {
     coinMultiplier: 1 + 0.1 * levels.coinBonus,
   };
 }
+
+/** Ob mindestens ein Upgrade mit den vorhandenen Münzen bezahlbar ist. */
+export function canAffordAny(coins: number, levels: UpgradeLevels): boolean {
+  return UPGRADE_IDS.some((id) => {
+    const cost = upgradeCost(id, levels[id]);
+    return cost !== null && coins >= cost;
+  });
+}

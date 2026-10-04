@@ -117,7 +117,7 @@ Gesamt: **86 Schritte**.
 - [x] 10.6 – Spielgefühl und Rückmeldung („Juice“)
 - [x] 10.7 – Steuerungs-Feinschliff
 - [x] 10.8 – Übergänge, Ladebildschirm, Fortsetzen-Countdown
-- [ ] 10.9 – Ergebnisbildschirm verbessern
+- [x] 10.9 – Ergebnisbildschirm verbessern
 - [ ] 10.10 – Menü, Levelkarte und Shop verbessern
 - [ ] 10.11 – Barrierefreiheit
 - [ ] 10.12 – Audio-UX

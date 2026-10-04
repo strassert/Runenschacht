@@ -1,6 +1,8 @@
 import { CONFIG } from './config';
 import type { WorldState } from './types';
 
+export type DefeatCause = 'horde' | 'boss' | 'wall' | 'gate';
+
 export interface RunResult {
   levelId: number;
   victory: boolean;
@@ -11,6 +13,25 @@ export interface RunResult {
   enemiesKilled: number;
   blocksCollected: number;
   timeSeconds: number;
+  /** squad.z / arenaZ (0..1) */
+  progress: number;
+  /** Nur bei Niederlage: wodurch zuletzt Soldaten verloren gingen. */
+  defeatCause: DefeatCause | null;
+}
+
+function causeOf(reason: WorldState['stats']['lastLossReason']): DefeatCause | null {
+  switch (reason) {
+    case 'enemy':
+      return 'horde';
+    case 'boss':
+      return 'boss';
+    case 'wall':
+      return 'wall';
+    case 'gate':
+      return 'gate';
+    default:
+      return null;
+  }
 }
 
 export function computeResult(world: WorldState): RunResult {
@@ -46,5 +67,7 @@ export function computeResult(world: WorldState): RunResult {
     enemiesKilled: world.stats.enemiesKilled,
     blocksCollected: world.stats.blocksCollected,
     timeSeconds: world.time,
+    progress: Math.max(0, Math.min(1, world.squad.z / world.arenaZ)),
+    defeatCause: victory ? null : causeOf(world.stats.lastLossReason),
   };
 }

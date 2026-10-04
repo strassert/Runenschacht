@@ -29,6 +29,8 @@ export interface SaveData {
   highestUnlockedLevel: number;
   /** "1" → 0..3 (beste) */
   levelStars: Record<string, number>;
+  /** "1" → 0..1 (bester Fortschritt je Level) */
+  levelBestProgress: Record<string, number>;
   upgrades: UpgradeLevels;
   settings: Settings;
   tutorialSeen: Record<string, boolean>;
@@ -48,6 +50,7 @@ export function defaultSave(): SaveData {
     coins: 0,
     highestUnlockedLevel: 1,
     levelStars: {},
+    levelBestProgress: {},
     upgrades: { ...DEFAULT_UPGRADE_LEVELS },
     settings: {
       sound: true,
@@ -90,6 +93,11 @@ export function sanitizeSave(raw: unknown): SaveData {
   if (isObj(raw.levelStars)) {
     for (const [k, v] of Object.entries(raw.levelStars)) {
       if (/^\d+$/.test(k)) d.levelStars[k] = int(v, 0, 3, 0);
+    }
+  }
+  if (isObj(raw.levelBestProgress)) {
+    for (const [k, v] of Object.entries(raw.levelBestProgress)) {
+      if (/^\d+$/.test(k)) d.levelBestProgress[k] = num(v, 0, 1, 0);
     }
   }
   if (isObj(raw.upgrades)) {
@@ -190,6 +198,10 @@ export class SaveManager {
       d.stats.enemiesKilled += result.enemiesKilled;
       d.coins += result.coins;
       if (result.victory) d.stats.wins++;
+      if (result.levelId <= LEVEL_COUNT) {
+        const k = String(result.levelId);
+        d.levelBestProgress[k] = Math.max(d.levelBestProgress[k] ?? 0, result.victory ? 1 : result.progress);
+      }
       if (result.levelId > 1000) {
         const round = result.levelId - 1000;
         d.stats.bestEndlessRound = Math.max(d.stats.bestEndlessRound, result.victory ? round : round - 1);
