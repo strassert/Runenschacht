@@ -6,6 +6,8 @@ import { Renderer } from '../render/Renderer';
 import { applyFog, createSky } from '../render/Sky';
 import { GameLoop } from './GameLoop';
 import { GameStateMachine } from './GameStateMachine';
+import { FpsMeter, type DebugParams } from './debug';
+import type { Quality } from '../render/quality';
 import { Session } from './Session';
 
 export class App {
@@ -19,8 +21,18 @@ export class App {
   readonly machine = new GameStateMachine();
   private finishedTimer = 0;
   private autoplay = false;
+  private seedOverride: number | null = null;
+  private quality: Quality = 'medium';
+  private timeScale = 1;
+  private fpsMeter: FpsMeter | null = null;
+  fps = 0;
 
-  constructor(root: HTMLElement) {
+  constructor(root: HTMLElement, params?: DebugParams) {
+    if (params) {
+      this.seedOverride = params.seed;
+      this.timeScale = params.speed;
+      if (params.quality) this.quality = params.quality;
+    }
     const canvas = root.querySelector<HTMLCanvasElement>('#game-canvas');
     if (!canvas) throw new Error('#game-canvas fehlt');
     this.renderer = new Renderer({ canvas, maxPixelRatio: 2, shadows: true, antialias: true });
@@ -36,6 +48,7 @@ export class App {
     document.addEventListener('visibilitychange', () => {
       if (document.hidden && this.machine.state === 'playing') this.pause();
     });
+    if (params?.debug) this.fpsMeter = new FpsMeter(root);
     this.loop = new GameLoop((dt) => this.frame(dt));
     this.loop.start();
   }
@@ -43,8 +56,9 @@ export class App {
   /** Startet ein Level; der Trupp wartet, bis die erste Eingabe erfolgt. */
   startLevel(levelId: number, autoplay = false): void {
     this.autoplay = autoplay;
-    const level = getLevel(levelId);
-    if (!level) throw new Error(`Unbekanntes Level ${levelId}`);
+    const base = getLevel(levelId);
+    if (!base) throw new Error(`Unbekanntes Level ${levelId}`);
+    const level = this.seedOverride !== null ? { ...base, seed: this.seedOverride } : base;
     if (this.session) {
       this.renderer.scene.remove(this.session.view.root);
       this.session.dispose();
@@ -53,10 +67,11 @@ export class App {
       level,
       modifiers: { startSoldierBonus: 0, fireRateMultiplier: 1, coinMultiplier: 1 },
       autoplay,
-      quality: 'medium',
+      quality: this.quality,
       shadows: true,
     });
     this.session = session;
+    session.timeScale = this.timeScale;
     this.finishedTimer = 0;
     if (this.machine.state !== 'playing') this.machine.go('playing');
     this.renderer.scene.add(session.view.root);
@@ -65,6 +80,10 @@ export class App {
     this.input.enabled = true;
     if (autoplay) session.sim.start();
     else this.input.onFirstInput = () => session.sim.start();
+  }
+
+  getSession(): Session | null {
+    return this.session;
   }
 
   pause(): void {
@@ -107,5 +126,13 @@ export class App {
     }
     this.sky.position.copy(this.renderer.camera.position);
     this.renderer.render();
+    if (this.fpsMeter) {
+      const w = s?.world;
+      const info = w
+        ? `${this.machine.state}/${w.phase} n=${w.squad.count} z=${w.squad.z.toFixed(0)} en=${w.enemies.count} b=${w.bullets.count} dc=${this.renderer.three.info.render.calls}`
+        : '-';
+      this.fpsMeter.update(frameDt, info);
+      this.fps = this.fpsMeter.fps;
+    }
   }
 }

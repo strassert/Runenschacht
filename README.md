@@ -27,4 +27,15 @@ Siehe [`docs/plan/README.md`](docs/plan/README.md).
 
 ## Debug-Parameter
 
-Folgt in Schritt 5.4.
+URL-Parameter für Entwicklung und Tests:
+
+| Parameter | Wirkung |
+|---|---|
+| `?level=3` | Level direkt starten |
+| `?seed=42` | Seed des Levels überschreiben |
+| `?autoplay=1` | Bot steuert den Trupp |
+| `?speed=4` | Zeitraffer (1–8) |
+| `?debug=1` | FPS-/Zustandsanzeige und `window.__game` |
+| `?quality=low\|medium\|high` | Grafikqualität erzwingen |
+
+`window.__game` (nur mit `debug=1` oder im Dev-Server): `getState()`, `start(level)`, `skipTo(z)`, `win()`, `lose()`.
