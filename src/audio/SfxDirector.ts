@@ -38,7 +38,7 @@ export class SfxDirector {
         a.play('wallSmash');
         break;
       case 'enemyKilled':
-        a.play('enemyDie', { pitch: 0.9 + world.rng.next() * 0.3 });
+        a.play('enemyDie', { pitch: 0.9 + Math.random() * 0.3 });
         break;
       case 'soldiersChanged':
         if (e.delta < 0 && (e.reason === 'enemy' || e.reason === 'boss')) a.play('soldierLost');

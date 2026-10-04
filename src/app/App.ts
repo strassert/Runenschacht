@@ -8,6 +8,7 @@ import type { Quality } from '../render/quality';
 import { Renderer } from '../render/Renderer';
 import { applyFog, createSky } from '../render/Sky';
 import { AudioEngine } from '../audio/AudioEngine';
+import { MusicPlayer } from '../audio/music';
 import { SfxDirector } from '../audio/SfxDirector';
 import { setButtonClickHook } from '../ui/components/Button';
 import { HudScreen } from '../ui/screens/HudScreen';
@@ -47,6 +48,7 @@ export class App {
   private readonly loading = new LoadingScreen();
 
   private readonly sfx = new SfxDirector(this.audio);
+  private readonly music = new MusicPlayer(this.audio);
   private session: Session | null = null;
   private currentLevelId = 1;
   private autoplay = false;
@@ -311,6 +313,16 @@ export class App {
     this.ui.showOverlay('result');
   }
 
+  private updateMusic(): void {
+    const st = this.machine.state;
+    const w = this.session?.world;
+    let mode: 'menu' | 'run' | 'boss' | null = 'menu';
+    if (st === 'playing' || st === 'paused') mode = w?.phase === 'bossFight' ? 'boss' : 'run';
+    else if (st === 'boot') mode = null;
+    if (mode) this.music.setMode(mode);
+    this.music.update();
+  }
+
   private frame(frameDt: number): void {
     const s = this.session;
     if (s) {
@@ -327,6 +339,7 @@ export class App {
       this.rig.update(s.world, frameDt);
       this.lighting.update(s.world);
     }
+    this.updateMusic();
     this.sky.position.copy(this.renderer.camera.position);
     this.renderer.render();
     if (this.fpsMeter) {
