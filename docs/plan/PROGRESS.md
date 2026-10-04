@@ -58,7 +58,7 @@ Gesamt: **86 Schritte**.
 - [x] 4.8 – Zahlen-Labels
 - [x] 4.9 – Bonus-Blöcke (BlockView)
 - [x] 4.10 – Tore (GateView)
-- [ ] 4.11 – Upgrade-Karten (CardView)
+- [x] 4.11 – Upgrade-Karten (CardView)
 - [ ] 4.12 – Projektile (BulletView)
 - [ ] 4.13 – Held und Boss
 - [ ] 4.14 – Umgebung (Dschungel, Klippen, Wasserfälle, Berge)
