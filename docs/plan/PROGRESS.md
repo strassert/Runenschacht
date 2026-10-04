@@ -37,7 +37,7 @@ Gesamt: **86 Schritte**.
 - [x] 3.3 – Bonus-Blöcke einsammeln
 - [x] 3.4 – Tore
 - [x] 3.5 – Karten: Belohnung und Wand
-- [ ] 3.6 – Gegnerhorde
+- [x] 3.6 – Gegnerhorde
 - [ ] 3.7 – Held: Folgen und Schießen
 - [ ] 3.8 – Boss
 - [ ] 3.9 – Trupp schießt
