@@ -9,6 +9,10 @@ import { BlockView } from './render/views/BlockView';
 import { EnemyView } from './render/views/EnemyView';
 import { GateView } from './render/views/GateView';
 import { CardView } from './render/views/CardView';
+import { BulletView } from './render/views/BulletView';
+import { HeroView } from './render/views/HeroView';
+import { BossView } from './render/views/BossView';
+import { activateHero } from './core/systems/hero';
 import { Simulation } from './core/simulation';
 import { Bot } from './core/bot';
 import { getLevel } from './core/level/levels';
@@ -44,7 +48,19 @@ const blockView = new BlockView(sim.world);
 const enemyView = new EnemyView(level);
 const gateView = new GateView(sim.world.gates);
 const cardView = new CardView(sim.world.cards);
-r.scene.add(blockView.root, enemyView.root, gateView.root, cardView.root);
+const bulletView = new BulletView();
+const heroView = new HeroView(true);
+const bossView = new BossView(true);
+r.scene.add(
+  blockView.root,
+  enemyView.root,
+  gateView.root,
+  cardView.root,
+  bulletView.root,
+  heroView.root,
+  bossView.root,
+);
+if (params.get('hero')) activateHero(sim.world);
 sim.world.squad.z = startZ;
 let acc = 0;
 let last = performance.now();
@@ -56,6 +72,7 @@ function frame(now: number): void {
   while (acc >= CONFIG.sim.dt) {
     bot.update(sim.world, CONFIG.sim.dt);
     sim.step();
+    for (const ev of sim.world.events) bulletView.onEvent(ev);
     sim.clearEvents();
     acc -= CONFIG.sim.dt;
   }
@@ -64,6 +81,9 @@ function frame(now: number): void {
   enemyView.sync(sim.world);
   gateView.sync(sim.world);
   cardView.sync(sim.world);
+  bulletView.sync(sim.world, dt);
+  heroView.sync(sim.world);
+  bossView.sync(sim.world);
   rig.update(sim.world, dt);
   lighting.update(sim.world);
   sky.position.copy(r.camera.position);
