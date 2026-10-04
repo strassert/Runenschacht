@@ -89,7 +89,7 @@ Gesamt: **86 Schritte**.
 - [x] 7.2 – Synthetisierte Soundeffekte
 - [x] 7.3 – Musik
 - [x] 7.4 – Partikel
-- [ ] 7.5 – Schwebende Zahlen
+- [x] 7.5 – Schwebende Zahlen
 - [ ] 7.6 – Screenshake, Treffer-Vignette, Vibration
 
 ## Phase 8 – Inhalte & Balancing (M4)  ([phase-8-content-balancing.md](phase-8-content-balancing.md))

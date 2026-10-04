@@ -4,6 +4,9 @@ import type { LevelDef } from '../../core/level/types';
 import type { WorldState } from '../../core/types';
 import type { Quality } from '../quality';
 import { Particles } from '../fx/Particles';
+import { FloatingText } from '../fx/FloatingText';
+import { WEAPONS } from '../../core/config';
+import { gateLabel } from './GateView';
 import { BlockView } from './BlockView';
 import { BossView } from './BossView';
 import { BulletView } from './BulletView';
@@ -36,6 +39,10 @@ export class WorldView {
   private readonly boss: BossView;
   private readonly countLabel: CountLabelView;
   private readonly particles = new Particles();
+  private readonly texts = new FloatingText();
+  private comboSlot = -1;
+  private comboTotal = 0;
+  private comboTime = -10;
   private camera: THREE.Camera | null = null;
   private cardHitCounter = 0;
 
@@ -68,6 +75,7 @@ export class WorldView {
       this.boss.root,
       this.countLabel.root,
       this.particles.root,
+      this.texts.root,
     );
   }
 
@@ -86,12 +94,47 @@ export class WorldView {
     switch (event.type) {
       case 'soldiersChanged':
         if (event.delta > 0) this.countLabel.pulse = 1;
+        if (event.reason === 'wall' && event.delta < 0) {
+          this.texts.spawn(String(event.delta).replace('-', '\u2212'), event.x, 2, event.z, '#ff6b6b', 1.2);
+        }
+        break;
+      case 'gatePassed': {
+        const s = this.world.squad;
+        const good = event.after >= event.before;
+        this.texts.spawn(gateLabel(event.op, event.value), s.x, 2.4, s.z, good ? '#6dffb0' : '#ff6b6b', 1.6);
+        break;
+      }
+      case 'weaponUpgraded':
+        this.texts.spawn(
+          WEAPONS[event.tier].name,
+          this.world.squad.x,
+          2.4,
+          this.world.squad.z,
+          '#ffd84d',
+          1.4,
+        );
+        break;
+      case 'heroJoined':
+        this.texts.spawn('HELD!', this.world.squad.x, 2.6, this.world.squad.z, '#ffd84d', 1.6);
         break;
       case 'enemyKilled':
         p.burst(event.x, 0.5, event.z, 6, 0xff3b30, 3, 0.4);
         break;
       case 'blockCollected': {
         const gold = this.world.blocks[event.id]?.color === 'gold';
+        const color = gold ? '#ffe27a' : '#9cc4ff';
+        const now = this.world.time;
+        if (now - this.comboTime <= 0.6 && this.comboSlot >= 0) {
+          this.comboTotal += event.value;
+          if (!this.texts.retext(this.comboSlot, `+${this.comboTotal}`, color)) this.comboSlot = -1;
+        } else {
+          this.comboSlot = -1;
+        }
+        if (this.comboSlot < 0) {
+          this.comboTotal = event.value;
+          this.comboSlot = this.texts.spawn(`+${event.value}`, event.x, 1.2, event.z, color);
+        }
+        this.comboTime = now;
         p.burst(event.x, 0.6, event.z, 14, gold ? 0xffd84d : 0x4f8bff, 4, 0.5, { upward: 3 });
         break;
       }
@@ -132,6 +175,7 @@ export class WorldView {
     this.boss.sync(world);
     this.countLabel.sync(world, frameDt);
     if (this.camera) this.particles.update(frameDt, this.camera);
+    this.texts.update(frameDt);
   }
 
   dispose(): void {
@@ -147,5 +191,6 @@ export class WorldView {
     this.boss.dispose();
     this.countLabel.dispose();
     this.particles.dispose();
+    this.texts.dispose();
   }
 }
