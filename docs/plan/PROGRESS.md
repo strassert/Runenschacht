@@ -39,7 +39,7 @@ Gesamt: **86 Schritte**.
 - [x] 3.5 – Karten: Belohnung und Wand
 - [x] 3.6 – Gegnerhorde
 - [x] 3.7 – Held: Folgen und Schießen
-- [ ] 3.8 – Boss
+- [x] 3.8 – Boss
 - [ ] 3.9 – Trupp schießt
 - [ ] 3.10 – Projektile: Flug, Treffer, Schaden
 - [ ] 3.11 – Sieg/Niederlage
