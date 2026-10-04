@@ -19,7 +19,7 @@ Gesamt: **86 Schritte**.
 - [x] 1.3 – Deterministischer Zufallsgenerator
 - [x] 1.4 – Level-Typen und Simulations-Ereignisse
 - [x] 1.5 – Objekt-Pools für Projektile und Gegner
-- [ ] 1.6 – Welt-Typen vervollständigen
+- [x] 1.6 – Welt-Typen vervollständigen
 - [ ] 1.7 – Formation (Phyllotaxis-Spirale)
 - [ ] 1.8 – Räumliche Z-Buckets (Broadphase)
 - [ ] 1.9 – Shop-Formeln und Laufzeit-Modifikatoren
