@@ -110,7 +110,7 @@ Gesamt: **86 Schritte**.
 ## Phase 10 – UI/UX-Verbesserung (M6)  ([phase-10-ui-ux-polish.md](phase-10-ui-ux-polish.md))
 
 - [x] 10.1 – UX-Audit und Baseline-Screenshots
-- [ ] 10.2 – Design-Tokens, Icons und Komponenten
+- [x] 10.2 – Design-Tokens, Icons und Komponenten
 - [ ] 10.3 – Layout-Rahmen, Safe Areas, Desktop-Darstellung
 - [ ] 10.4 – HUD-Redesign
 - [ ] 10.5 – Onboarding und kontextuelle Hinweise

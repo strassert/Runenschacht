@@ -27,7 +27,7 @@ export class HudScreen extends BaseScreen {
 
   constructor() {
     super('screen--hud');
-    const pauseBtn = button('', () => this.onPause?.(), 'icon', { icon: '⏸', ariaLabel: 'Pause' });
+    const pauseBtn = button('', () => this.onPause?.(), 'icon', { icon: 'pause', ariaLabel: 'Pause' });
     const top = h('div', { class: 'hud-top' }, this.levelLabel, this.progress.el, this.coins, pauseBtn);
     this.bossWrap.append(this.bossText, this.bossBar.el);
     this.weaponBox.append(this.weaponName, ' ', h('span', { class: 'pips' }, ...this.pips));

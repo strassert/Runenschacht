@@ -1,5 +1,9 @@
 import type { QualitySetting, Settings } from '../../persistence/SaveManager';
 import { button } from '../components/Button';
+import { panel } from '../components/Panel';
+import { segmented } from '../components/Segmented';
+import { slider } from '../components/Slider';
+import { toggle } from '../components/Toggle';
 import { clear, h } from '../dom';
 import { BaseScreen } from '../UIManager';
 
@@ -9,7 +13,7 @@ export interface SettingsCallbacks {
   resetProgress: () => void;
 }
 
-const QUALITY_LABELS: [QualitySetting, string][] = [
+const QUALITY_OPTIONS: readonly (readonly [QualitySetting, string])[] = [
   ['auto', 'Auto'],
   ['low', 'Niedrig'],
   ['medium', 'Mittel'],
@@ -17,7 +21,7 @@ const QUALITY_LABELS: [QualitySetting, string][] = [
 ];
 
 export class SettingsScreen extends BaseScreen {
-  private readonly body = h('div', { class: 'panel col settings-body' });
+  private readonly body = panel({ className: 'col settings-body' });
 
   constructor(private readonly cb: SettingsCallbacks) {
     super('screen--panel');
@@ -30,68 +34,20 @@ export class SettingsScreen extends BaseScreen {
 
   refresh(s: Readonly<Settings>): void {
     clear(this.body);
-    const toggle = (label: string, key: 'sound' | 'music' | 'haptics' | 'reducedMotion'): HTMLElement => {
-      const input = h('input', {
-        type: 'checkbox',
-        'data-ui-interactive': true,
-        role: 'switch',
-        'aria-label': label,
-      });
-      input.checked = s[key];
-      input.addEventListener('change', () => this.cb.change({ [key]: input.checked }));
-      return h('label', { class: 'setting-row' }, h('span', null, label), input);
-    };
-    const slider = h('input', {
-      type: 'range',
-      min: '0.5',
-      max: '3',
-      step: '0.1',
-      value: String(s.sensitivity),
-      'data-ui-interactive': true,
-      'aria-label': 'Steuerempfindlichkeit',
-    });
-    const sliderValue = h('b', null, s.sensitivity.toFixed(1));
-    slider.addEventListener('input', () => {
-      const v = Number(slider.value);
-      sliderValue.textContent = v.toFixed(1);
-      this.cb.change({ sensitivity: v });
-    });
-
-    const quality = h(
-      'div',
-      { class: 'segmented', role: 'radiogroup', 'aria-label': 'Grafikqualität' },
-      ...QUALITY_LABELS.map(([value, label]) => {
-        const b = h(
-          'button',
-          {
-            type: 'button',
-            class: `segmented__btn${s.quality === value ? ' segmented__btn--on' : ''}`,
-            role: 'radio',
-            'aria-checked': String(s.quality === value),
-            'data-ui-interactive': true,
-          },
-          label,
-        );
-        b.addEventListener('click', () => {
-          this.cb.change({ quality: value });
-          this.refresh({ ...s, quality: value });
-        });
-        return b;
-      }),
-    );
-
     this.body.append(
-      toggle('Soundeffekte', 'sound'),
-      toggle('Musik', 'music'),
-      toggle('Vibration', 'haptics'),
-      toggle('Bewegung reduzieren', 'reducedMotion'),
-      h(
-        'label',
-        { class: 'setting-row setting-row--col' },
-        h('span', null, 'Steuerempfindlichkeit ', sliderValue),
-        slider,
-      ),
-      h('div', { class: 'setting-row setting-row--col' }, h('span', null, 'Grafikqualität'), quality),
+      toggle('Soundeffekte', s.sound, (v) => this.cb.change({ sound: v })),
+      toggle('Musik', s.music, (v) => this.cb.change({ music: v })),
+      toggle('Vibration', s.haptics, (v) => this.cb.change({ haptics: v })),
+      toggle('Bewegung reduzieren', s.reducedMotion, (v) => this.cb.change({ reducedMotion: v })),
+      slider({
+        label: 'Steuerempfindlichkeit',
+        min: 0.5,
+        max: 3,
+        step: 0.1,
+        value: s.sensitivity,
+        onChange: (v) => this.cb.change({ sensitivity: v }),
+      }),
+      segmented('Grafikqualität', QUALITY_OPTIONS, s.quality, (v) => this.cb.change({ quality: v })),
       button(
         'Fortschritt zurücksetzen',
         () => {

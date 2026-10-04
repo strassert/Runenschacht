@@ -31,7 +31,7 @@ page.on('console', (m) => logs.push(`[${m.type()}] ${m.text()}`));
 page.on('pageerror', (e) => logs.push(`[pageerror] ${e.message}`));
 await page.goto(base + url);
 await page.waitForTimeout(wait);
-// Optionale Aktionen: --actions "down:195,600|move:100,600|wait:500|up|key:ArrowLeft|click:195,400|shot:name.png|eval:js"
+// Optionale Aktionen: --actions "down:195,600|move:100,600|wait:500|up|key:ArrowLeft|click:195,400|text:Shop|shot:name.png|eval:js"
 const actions = opt('actions', '');
 for (const raw of actions.split('|').filter(Boolean)) {
   const idx = raw.indexOf(':');
@@ -44,6 +44,7 @@ for (const raw of actions.split('|').filter(Boolean)) {
   } else if (cmd === 'move') await page.mouse.move(ax, ay, { steps: 8 });
   else if (cmd === 'up') await page.mouse.up();
   else if (cmd === 'click') await page.mouse.click(ax, ay);
+  else if (cmd === 'text') await page.getByText(arg, { exact: false }).first().click();
   else if (cmd === 'wait') await page.waitForTimeout(Number(arg));
   else if (cmd === 'key') await page.keyboard.press(arg);
   else if (cmd === 'keydown') await page.keyboard.down(arg);
