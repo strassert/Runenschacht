@@ -81,7 +81,7 @@ Gesamt: **86 Schritte**.
 - [x] 6.6 – Ergebnisbildschirm
 - [x] 6.7 – Shop
 - [x] 6.8 – Einstellungen
-- [ ] 6.9 – Kompletter Ablauf verdrahten
+- [x] 6.9 – Kompletter Ablauf verdrahten
 
 ## Phase 7 – Audio & Effekte  ([phase-7-audio-fx.md](phase-7-audio-fx.md))
 
