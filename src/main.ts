@@ -1,3 +1,4 @@
+import '@fontsource/lilita-one';
 import { Renderer } from './render/Renderer';
 import { CameraRig } from './render/CameraRig';
 import { Lighting } from './render/Lighting';
