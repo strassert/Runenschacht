@@ -40,7 +40,7 @@ Gesamt: **86 Schritte**.
 - [x] 3.6 – Gegnerhorde
 - [x] 3.7 – Held: Folgen und Schießen
 - [x] 3.8 – Boss
-- [ ] 3.9 – Trupp schießt
+- [x] 3.9 – Trupp schießt
 - [ ] 3.10 – Projektile: Flug, Treffer, Schaden
 - [ ] 3.11 – Sieg/Niederlage
 - [ ] 3.12 – `Simulation`-Klasse und Wertung
