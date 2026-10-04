@@ -28,7 +28,7 @@ export class TutorialOverlay extends BaseScreen {
   private readonly swipe = h('div', { class: 'tip-swipe' }, icon('hand', 48));
 
   constructor() {
-    super('screen--tutorial');
+    super('screen--tutorial', false);
     this.bubble.append(this.iconSlot, this.text, this.arrow);
     this.el.append(this.bubble, this.swipe);
     this.el.setAttribute('role', 'status');

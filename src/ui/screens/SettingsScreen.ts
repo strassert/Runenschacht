@@ -76,6 +76,8 @@ export class SettingsScreen extends BaseScreen {
       toggle('Musik', s.music, (v) => this.cb.change({ music: v })),
       toggle('Vibration', s.haptics, (v) => this.cb.change({ haptics: v })),
       toggle('Bewegung reduzieren', s.reducedMotion, (v) => this.cb.change({ reducedMotion: v })),
+      toggle('Farbenblind-Modus', s.colorblind, (v) => this.cb.change({ colorblind: v })),
+      toggle('Große Schrift', s.largeText, (v) => this.cb.change({ largeText: v })),
       slider({
         label: 'Steuerempfindlichkeit',
         min: 0.5,

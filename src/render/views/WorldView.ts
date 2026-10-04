@@ -94,6 +94,10 @@ export class WorldView {
     this.indicatorActive = on;
   }
 
+  setColorblind(on: boolean): void {
+    this.gates.setColorblind(on);
+  }
+
   setReducedMotion(on: boolean): void {
     this.particles.countScale = this.profile.particlesScale * (on ? 0.5 : 1);
     this.countLabel.reducedMotion = on;

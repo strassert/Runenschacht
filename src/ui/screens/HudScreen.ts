@@ -50,15 +50,20 @@ export class HudScreen extends BaseScreen {
   private heroVisible = false;
 
   constructor() {
-    super('screen--hud');
+    super('screen--hud', false);
     const pauseBtn = button('', () => this.onPause?.(), 'icon', { icon: 'pause', ariaLabel: 'Pause' });
     const center = h(
       'div',
       { class: 'hud-center' },
       this.levelLabel,
-      h('div', { class: 'hud-progress-wrap' }, this.progress.el, this.markerLayer),
+      h('div', { class: 'hud-progress-wrap', 'aria-hidden': 'true' }, this.progress.el, this.markerLayer),
     );
-    const coins = h('div', { class: 'pill hud-coins' }, icon('coin', 18), this.coinsText);
+    const coins = h(
+      'div',
+      { class: 'pill hud-coins', 'aria-hidden': 'true' },
+      icon('coin', 18),
+      this.coinsText,
+    );
     const top = h('div', { class: 'hud-top' }, pauseBtn, center, coins);
 
     this.bossWrap.append(

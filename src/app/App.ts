@@ -276,6 +276,11 @@ export class App {
     this.countdown = 0;
     this.ui.hide('countdown');
     this.ui.hide('tutorial');
+    const w = this.session?.world;
+    if (w)
+      this.pauseScreen.setSummary(
+        `${w.squad.count} Soldaten, ${Math.round((w.squad.z / w.arenaZ) * 100)} % geschafft`,
+      );
     this.ui.showOverlay('pause');
   }
 
@@ -291,8 +296,12 @@ export class App {
   }
 
   togglePause(): void {
-    if (this.machine.state === 'playing') this.pause();
-    else if (this.machine.state === 'paused') this.resume();
+    const st = this.machine.state;
+    if (st === 'playing') this.pause();
+    else if (st === 'paused') this.resume();
+    else if (st === 'settings') this.leaveSettings();
+    else if (st === 'shop') this.leaveShop();
+    else if (st === 'levelSelect') this.goMenu(true);
   }
 
   // ---------------------------------------------------------------------------------------------
@@ -358,6 +367,7 @@ export class App {
     this.session = session;
     session.view.attachCamera(this.renderer.camera);
     session.view.setReducedMotion(this.save.data.settings.reducedMotion);
+    session.view.setColorblind(this.save.data.settings.colorblind);
     this.renderer.scene.add(session.view.root);
     this.rig.update(session.world, 0, true);
     // Shader vorab kompilieren (verhindert Ruckler beim ersten Treffer).
@@ -427,6 +437,8 @@ export class App {
   private applySettings(): void {
     const st = this.save.data.settings;
     document.documentElement.classList.toggle('reduced-motion', st.reducedMotion);
+    document.documentElement.classList.toggle('large-text', st.largeText);
+    this.session?.view.setColorblind(st.colorblind);
     this.input.sensitivity = st.sensitivity;
     this.input.mode = st.controlMode;
     this.audio.setSoundEnabled(st.sound);

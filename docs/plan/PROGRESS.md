@@ -119,7 +119,7 @@ Gesamt: **86 Schritte**.
 - [x] 10.8 – Übergänge, Ladebildschirm, Fortsetzen-Countdown
 - [x] 10.9 – Ergebnisbildschirm verbessern
 - [x] 10.10 – Menü, Levelkarte und Shop verbessern
-- [ ] 10.11 – Barrierefreiheit
+- [x] 10.11 – Barrierefreiheit
 - [ ] 10.12 – Audio-UX
 - [ ] 10.13 – Mobile-Feinschliff
 - [ ] 10.14 – Abschluss-Review (Meilenstein M6)

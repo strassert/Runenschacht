@@ -31,3 +31,20 @@ Schwere: **hoch** = verhindert Verständnis/Bedienung, **mittel** = stört spür
 | 22 | Phone quer | Kein Hinweis zum Drehen | Spiel im Querformat unbrauchbar | niedrig | 10.3 | [ ] |
 | 23 | Audio | iOS startet Ton erst nach Geste, kein Hinweis | Stille ohne Erklärung | niedrig | 10.12 | [ ] |
 | 24 | Steuerung | Kein Indikator, wohin der Trupp gleitet; nur eine Steuerart | Gefühl von Verzögerung | mittel | 10.7 | [ ] |
+
+## Kontrastprüfung (`node scripts/contrast-check.mjs`)
+
+| Paar | Verhältnis | Mindestwert |
+|---|---|---|
+| Weiß auf Blau (Button) | 4.50 : 1 | 3 (große Schrift) |
+| Weiß auf Blau-700 | 8.28 : 1 | 4.5 |
+| Dunkelbraun auf Gold (Button) | 8.26 : 1 | 4.5 |
+| Weiß auf Rot (Button) | 4.23 : 1 | 3 (große Schrift) |
+| Weiß auf Panel | 15.15 : 1 | 4.5 |
+| Gedämpft auf Panel | 8.46 : 1 | 4.5 |
+| Gold auf Panel | 9.04 : 1 | 4.5 |
+| Tinte auf Papier (Tipp-Blase) | 16.77 : 1 | 4.5 |
+| Weiß auf Grün-700 (Schalter an) | ≥ 3 : 1 | 3 |
+
+Der Schalter war zunächst mit Grün-500 nur 2.3 : 1 und wurde auf Grün-700 abgedunkelt.
+

@@ -23,8 +23,42 @@ export interface Screen {
 export abstract class BaseScreen implements Screen {
   readonly el: HTMLElement;
 
-  constructor(extraClass = '') {
+  constructor(
+    extraClass = '',
+    private readonly autoFocus = true,
+  ) {
     this.el = h('div', { class: `screen hidden ${extraClass}`.trim() });
+    if (extraClass.includes('screen--overlay')) {
+      this.el.setAttribute('role', 'dialog');
+      this.el.setAttribute('aria-modal', 'true');
+      // Fokus-Falle: Tab bleibt im Dialog
+      this.el.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab') return;
+        const items = this.focusables();
+        if (items.length === 0) return;
+        const first = items[0];
+        const last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      });
+    }
+  }
+
+  private focusables(): HTMLElement[] {
+    return [...this.el.querySelectorAll<HTMLElement>('button:not(:disabled), input, [tabindex="0"]')];
+  }
+
+  /** Setzt den Fokus auf die Primäraktion (Tastatur-/Screenreader-Nutzung). */
+  focusPrimary(): void {
+    const el =
+      this.el.querySelector<HTMLElement>('.btn--gold:not(:disabled), .btn--primary:not(:disabled)') ??
+      this.focusables()[0];
+    el?.focus({ preventScroll: true });
   }
 
   show(): void {
@@ -35,7 +69,10 @@ export abstract class BaseScreen implements Screen {
       this.el.classList.remove('screen--enter');
       void this.el.offsetWidth;
       this.el.classList.add('screen--enter');
-      window.setTimeout(() => this.el.classList.remove('screen--enter'), 230);
+      window.setTimeout(() => {
+        this.el.classList.remove('screen--enter');
+        if (this.autoFocus && !this.el.classList.contains('hidden')) this.focusPrimary();
+      }, 230);
     }
   }
 

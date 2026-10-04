@@ -14,7 +14,7 @@ export class LoadingScreen extends BaseScreen {
   private readonly tip = h('p', { class: 'loading-tip' }, TIPS[Math.floor(Math.random() * TIPS.length)]);
 
   constructor() {
-    super('screen--loading');
+    super('screen--loading', false);
     this.el.append(
       h('h1', { class: 'title' }, 'RUNENSCHACHT'),
       h('div', { class: 'loading-bar', role: 'progressbar', 'aria-label': 'Ladefortschritt' }, this.fill),

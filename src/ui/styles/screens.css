@@ -1052,3 +1052,10 @@
     transform: translate(var(--dx), 120px) scale(0.6);
   }
 }
+
+.pause-summary {
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+}

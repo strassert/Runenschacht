@@ -183,7 +183,7 @@
 }
 
 .toggle[aria-checked='true'] {
-  background: var(--green-500);
+  background: var(--green-700);
 }
 
 .toggle[aria-checked='true']::after {

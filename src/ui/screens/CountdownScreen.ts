@@ -6,7 +6,7 @@ export class CountdownScreen extends BaseScreen {
   private readonly number = h('div', { class: 'countdown', 'aria-live': 'assertive' }, '3');
 
   constructor() {
-    super('screen--countdown');
+    super('screen--countdown', false);
     this.el.append(this.number);
   }
 

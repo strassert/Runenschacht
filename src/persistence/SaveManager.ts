@@ -21,6 +21,8 @@ export interface Settings {
   quality: QualitySetting;
   reducedMotion: boolean;
   controlMode: ControlMode;
+  colorblind: boolean;
+  largeText: boolean;
 }
 
 export interface SaveData {
@@ -44,6 +46,15 @@ export interface StorageLike {
 
 export const SAVE_KEY = 'runenschacht.save.v1';
 
+/** Systemeinstellung „Bewegung reduzieren“ als Standardwert (nur im Browser). */
+function prefersReducedMotion(): boolean {
+  try {
+    return typeof window !== 'undefined' && !!window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+  } catch {
+    return false;
+  }
+}
+
 export function defaultSave(): SaveData {
   return {
     version: 1,
@@ -58,8 +69,10 @@ export function defaultSave(): SaveData {
       haptics: true,
       sensitivity: 1.4,
       quality: 'auto',
-      reducedMotion: false,
+      reducedMotion: prefersReducedMotion(),
       controlMode: 'relative',
+      colorblind: false,
+      largeText: false,
     },
     tutorialSeen: {},
     stats: { runs: 0, wins: 0, enemiesKilled: 0, bestEndlessRound: 0 },
@@ -109,6 +122,8 @@ export function sanitizeSave(raw: unknown): SaveData {
     d.settings.music = bool(s.music, d.settings.music);
     d.settings.haptics = bool(s.haptics, d.settings.haptics);
     d.settings.reducedMotion = bool(s.reducedMotion, d.settings.reducedMotion);
+    d.settings.colorblind = bool(s.colorblind, d.settings.colorblind);
+    d.settings.largeText = bool(s.largeText, d.settings.largeText);
     d.settings.sensitivity = num(s.sensitivity, 0.5, 3, d.settings.sensitivity);
     if (s.controlMode === 'relative' || s.controlMode === 'absolute') d.settings.controlMode = s.controlMode;
     if (s.quality === 'auto' || s.quality === 'low' || s.quality === 'medium' || s.quality === 'high') {
