@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { clamp, damp } from '../core/math';
+import { clamp, damp, easeOutCubic } from '../core/math';
 import type { WorldState } from '../core/types';
 
 const VFOV = 55;
@@ -13,6 +13,21 @@ export class CameraRig {
   /** 0..1, wird pro Frame abgebaut; erhöht das Sichtfeld kurz (Tor-Puls). */
   fovPulse = 0;
   private appliedFov = VFOV;
+  private intro = 1;
+  private static readonly INTRO_TIME = 1.2;
+
+  /** Startet den Kameraflug von oben zur Startposition. */
+  startIntro(): void {
+    this.intro = 0;
+  }
+
+  skipIntro(): void {
+    this.intro = 1;
+  }
+
+  get introActive(): boolean {
+    return this.intro < 1;
+  }
 
   private baseDistance = 20;
   private distance = 20;
@@ -33,10 +48,12 @@ export class CameraRig {
     const s = world.squad;
     const boss = world.phase === 'bossFight';
     const targetFx = s.x * 0.55;
-    const targetFz = s.z + (boss ? 9 : 7);
-    const targetDist = this.baseDistance * (boss ? 1.1 : 1) * this.distanceScale;
+    if (this.intro < 1) this.intro = Math.min(1, this.intro + frameDt / CameraRig.INTRO_TIME);
+    const k = 1 - easeOutCubic(this.intro);
+    const targetFz = s.z + (boss ? 9 : 7) + 55 * k;
+    const targetDist = this.baseDistance * (boss ? 1.1 : 1) * this.distanceScale + 22 * k;
 
-    if (snap) {
+    if (snap || this.intro < 1) {
       this.fx = targetFx;
       this.distance = targetDist;
     } else {

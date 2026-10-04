@@ -615,3 +615,88 @@
   opacity: 0;
   pointer-events: none;
 }
+
+/* ---------- Übergänge ---------- */
+.screen--enter {
+  animation: screen-in var(--t-med) var(--ease-out);
+  pointer-events: none;
+}
+
+.screen--overlay.screen--enter > .panel {
+  animation: panel-in var(--t-med) var(--ease-out);
+}
+
+.screen--hud.screen--enter,
+.screen--tutorial.screen--enter {
+  animation: none;
+}
+
+@keyframes screen-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes panel-in {
+  from {
+    transform: scale(0.96);
+  }
+  to {
+    transform: none;
+  }
+}
+
+/* ---------- Laden ---------- */
+.loading-bar {
+  width: min(60%, 260px);
+  height: 12px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.15);
+  overflow: hidden;
+}
+
+.loading-bar__fill {
+  height: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--blue-500), var(--gold-400));
+  transition: transform var(--t-med) var(--ease-out);
+}
+
+.loading-tip {
+  max-width: 80%;
+  text-align: center;
+  color: var(--muted);
+  font-size: var(--fs-sm);
+  margin: 0;
+}
+
+/* ---------- Countdown ---------- */
+.screen--countdown {
+  pointer-events: none;
+  background: rgba(8, 12, 20, 0.25);
+}
+
+.countdown {
+  font-family: var(--font-display);
+  font-size: 140px;
+  color: var(--gold-400);
+  text-shadow: 0 8px 0 rgba(0, 0, 0, 0.5);
+  animation: count-pop 0.5s var(--ease-out);
+}
+
+@keyframes count-pop {
+  from {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

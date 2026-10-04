@@ -21,6 +21,7 @@ import { FeedbackDirector } from './FeedbackDirector';
 import { h } from '../ui/dom';
 import { HudScreen } from '../ui/screens/HudScreen';
 import { LevelSelectScreen } from '../ui/screens/LevelSelectScreen';
+import { CountdownScreen } from '../ui/screens/CountdownScreen';
 import { LoadingScreen } from '../ui/screens/LoadingScreen';
 import { MenuScreen } from '../ui/screens/MenuScreen';
 import { PauseScreen } from '../ui/screens/PauseScreen';
@@ -55,6 +56,9 @@ export class App {
   private readonly settings: SettingsScreen;
   private readonly loading = new LoadingScreen();
   private readonly tutorialOverlay = new TutorialOverlay();
+  private readonly countdownScreen = new CountdownScreen();
+  private countdown = 0;
+  private countdownShown = 0;
   private tutorial: TutorialDirector | null = null;
   private tipTimer = 0;
   private bossSlowLeft = 0;
@@ -179,6 +183,7 @@ export class App {
     this.ui.register('shop', this.shop);
     this.ui.register('settings', this.settings);
     this.ui.register('tutorial', this.tutorialOverlay);
+    this.ui.register('countdown', this.countdownScreen);
 
     if (params?.debug) this.fpsMeter = new FpsMeter(root);
     this.setupQuality();
@@ -190,18 +195,30 @@ export class App {
 
   /** Wartet auf Schrift, zeigt dann Menü – oder startet direkt, wenn ein Level per URL gewünscht ist. */
   async boot(): Promise<void> {
+    const t0 = performance.now();
+    const nextFrame = (): Promise<void> => new Promise((r) => requestAnimationFrame(() => r()));
+    this.loading.setProgress(0.1);
     try {
       await Promise.all([document.fonts.load('48px "Lilita One"'), document.fonts.ready]);
     } catch {
       /* Schrift optional */
     }
-    if (this.params?.level) this.startLevel(this.params.level);
-    else this.goMenu();
+    this.loading.setProgress(0.3);
+    await nextFrame();
+    const first = this.params?.level ?? this.nextLevelId();
+    this.createSession(first); // baut Szene auf und kompiliert Shader
+    this.loading.setProgress(0.9);
+    await nextFrame();
+    this.loading.setProgress(1);
+    const wait = 400 - (performance.now() - t0);
+    if (wait > 0) await new Promise((r) => setTimeout(r, wait));
+    if (this.params?.level) this.startLevel(this.params.level, true);
+    else this.goMenu(true);
   }
 
   /** Startet ein Level; der Trupp wartet, bis die erste Eingabe erfolgt. */
-  startLevel(levelId: number): void {
-    this.createSession(levelId);
+  startLevel(levelId: number, reuseSession = false): void {
+    if (!reuseSession || !this.session) this.createSession(levelId);
     const session = this.session!;
     this.ui.hideAll();
     this.hud.setLabel(
@@ -212,8 +229,16 @@ export class App {
     if (this.machine.state !== 'playing') this.machine.go('playing');
     this.input.reset();
     this.input.enabled = true;
+    this.countdown = 0;
+    if (this.save.data.settings.reducedMotion) this.rig.skipIntro();
+    else this.rig.startIntro();
     if (this.autoplay) session.sim.start();
-    else this.input.onFirstInput = () => session.sim.start();
+    else {
+      this.input.onFirstInput = () => {
+        this.rig.skipIntro();
+        session.sim.start();
+      };
+    }
   }
 
   /** Startet den Endlosmodus mit neuem Seed bei Runde 1. */
@@ -245,6 +270,8 @@ export class App {
     if (this.machine.state !== 'playing') return;
     this.machine.go('paused');
     this.input.enabled = false;
+    this.countdown = 0;
+    this.ui.hide('countdown');
     this.ui.hide('tutorial');
     this.ui.showOverlay('pause');
   }
@@ -255,6 +282,9 @@ export class App {
     this.machine.go('playing');
     this.input.reset();
     this.input.enabled = true;
+    this.countdown = 1.5;
+    this.countdownShown = 0;
+    this.ui.showOverlay('countdown');
   }
 
   togglePause(): void {
@@ -335,11 +365,12 @@ export class App {
     if (this.machine.state !== state) this.machine.go(state);
   }
 
-  private goMenu(): void {
+  private goMenu(reuseSession = false): void {
     this.input.enabled = false;
     this.input.onFirstInput = null;
     const next = this.nextLevelId();
-    this.createSession(next);
+    if (!reuseSession || !this.session) this.createSession(next);
+    this.rig.skipIntro();
     this.goTo('menu');
     const lvl = getLevel(next);
     this.menu.setNextLevel(`Level ${next}${lvl ? ` · ${lvl.name}` : ''}`);
@@ -500,7 +531,21 @@ export class App {
     const s = this.session;
     if (s) {
       const state = this.machine.state;
-      if (state === 'playing') {
+      if (state === 'playing' && this.countdown > 0) {
+        // Fortsetzen-Countdown: Simulation steht, Eingaben werden verworfen
+        this.countdown -= frameDt;
+        this.input.consumeDeltaX();
+        const n = Math.max(1, Math.ceil(this.countdown / 0.5));
+        if (this.countdown <= 0) {
+          this.countdown = 0;
+          this.ui.hide('countdown');
+        } else if (n !== this.countdownShown) {
+          this.countdownShown = n;
+          this.countdownScreen.setNumber(n);
+          this.audio.play('uiClick');
+        }
+        s.view.sync(s.world, 0);
+      } else if (state === 'playing') {
         const dx = this.input.consumeDeltaX() + this.input.getKeyAxis() * 10 * frameDt;
         s.view.setIndicatorActive(this.input.isPointerDown());
         s.update(frameDt, dx, this.input.getAbsoluteTargetX());

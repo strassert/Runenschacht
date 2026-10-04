@@ -1,7 +1,16 @@
 import { h } from './dom';
 
 export type ScreenName =
-  'loading' | 'menu' | 'levelSelect' | 'hud' | 'pause' | 'result' | 'shop' | 'settings' | 'tutorial';
+  | 'loading'
+  | 'menu'
+  | 'levelSelect'
+  | 'hud'
+  | 'pause'
+  | 'result'
+  | 'shop'
+  | 'settings'
+  | 'tutorial'
+  | 'countdown';
 
 export interface Screen {
   readonly el: HTMLElement;
@@ -19,7 +28,15 @@ export abstract class BaseScreen implements Screen {
   }
 
   show(): void {
+    const wasHidden = this.el.classList.contains('hidden');
     this.el.classList.remove('hidden');
+    if (wasHidden) {
+      // Ein-/Einblend-Animation; währenddessen keine Eingaben (verhindert Doppelklicks)
+      this.el.classList.remove('screen--enter');
+      void this.el.offsetWidth;
+      this.el.classList.add('screen--enter');
+      window.setTimeout(() => this.el.classList.remove('screen--enter'), 230);
+    }
   }
 
   hide(): void {

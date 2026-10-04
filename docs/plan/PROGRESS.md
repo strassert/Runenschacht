@@ -116,7 +116,7 @@ Gesamt: **86 Schritte**.
 - [x] 10.5 – Onboarding und kontextuelle Hinweise
 - [x] 10.6 – Spielgefühl und Rückmeldung („Juice“)
 - [x] 10.7 – Steuerungs-Feinschliff
-- [ ] 10.8 – Übergänge, Ladebildschirm, Fortsetzen-Countdown
+- [x] 10.8 – Übergänge, Ladebildschirm, Fortsetzen-Countdown
 - [ ] 10.9 – Ergebnisbildschirm verbessern
 - [ ] 10.10 – Menü, Levelkarte und Shop verbessern
 - [ ] 10.11 – Barrierefreiheit
