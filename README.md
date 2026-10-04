@@ -13,10 +13,18 @@ Planungsphase. Der vollständige Umsetzungsplan (86 Schritte in 11 Phasen, inklu
 abschließender UI/UX-Überarbeitung) liegt in [`docs/plan/`](docs/plan/README.md).
 Arbeitsregeln für das ausführende Modell stehen in [`CLAUDE.md`](CLAUDE.md).
 
-## Entwicklung (ab Schritt 0.1)
+## Entwicklung
 
 ```bash
 npm install
 npm run dev     # Entwicklungsserver
 npm run check   # Typecheck, Lint, Format, Tests, Build
 ```
+
+## Plan
+
+Siehe [`docs/plan/README.md`](docs/plan/README.md).
+
+## Debug-Parameter
+
+Folgt in Schritt 5.4.
