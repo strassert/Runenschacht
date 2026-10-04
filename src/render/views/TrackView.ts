@@ -149,42 +149,42 @@ export class TrackView {
       this.root.add(m);
     }
 
-    // Baluster (Instanzen)
+    // Baluster (Instanzen, in z-Abschnitte geteilt, damit Frustum-Culling greift)
     const profile = [
       [0.001, 0],
       [0.09, 0],
       [0.09, 0.06],
-      [0.06, 0.12],
       [0.05, 0.2],
-      [0.1, 0.35],
-      [0.12, 0.45],
+      [0.11, 0.4],
       [0.06, 0.55],
-      [0.06, 0.68],
-      [0.1, 0.75],
+      [0.09, 0.75],
       [0.001, 0.75],
     ].map(([r, y]) => new THREE.Vector2(r, y));
-    const balGeo = new THREE.LatheGeometry(profile, 8);
-    const step = 0.55;
-    const perSide = Math.floor((L - zStart) / step);
-    const balusters = new THREE.InstancedMesh(balGeo, railMat, perSide * 2);
-    balusters.castShadow = true;
+    const balGeo = new THREE.LatheGeometry(profile, 6);
+    const step = 0.7;
+    const chunkLen = 48;
     const m4 = new THREE.Matrix4();
-    let n = 0;
-    for (const side of [-1, 1]) {
-      for (let i = 0; i < perSide; i++) {
-        m4.makeTranslation(side * 5.9, 0.3, -(zStart + i * step));
-        balusters.setMatrixAt(n++, m4);
+    for (let c0 = zStart; c0 < L; c0 += chunkLen) {
+      const perSide = Math.max(1, Math.floor(Math.min(chunkLen, L - c0) / step));
+      const chunk = new THREE.InstancedMesh(balGeo, railMat, perSide * 2);
+      chunk.castShadow = true;
+      let k = 0;
+      for (const side of [-1, 1]) {
+        for (let i = 0; i < perSide; i++) {
+          m4.makeTranslation(side * 5.9, 0.3, -(c0 + i * step));
+          chunk.setMatrixAt(k++, m4);
+        }
       }
+      chunk.instanceMatrix.needsUpdate = true;
+      this.root.add(chunk);
     }
-    balusters.instanceMatrix.needsUpdate = true;
-    this.root.add(balusters);
 
     // Pfeiler + Moos-Kappen alle 12 m
     const pillarCount = Math.floor((L - zStart) / 12) + 1;
     const pillars = new THREE.InstancedMesh(new THREE.BoxGeometry(0.7, 1.4, 0.7), railMat, pillarCount * 2);
     const caps = new THREE.InstancedMesh(new THREE.BoxGeometry(0.82, 0.12, 0.82), mossMat, pillarCount * 2);
     pillars.castShadow = true;
-    n = 0;
+    let n = 0;
     for (const side of [-1, 1]) {
       for (let i = 0; i < pillarCount; i++) {
         const z = -(zStart + i * 12);

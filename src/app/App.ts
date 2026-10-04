@@ -201,6 +201,17 @@ export class App {
     return this.currentLevelId > 1000;
   }
 
+  /** Render-Statistik (Draw Calls, Dreiecke, GPU-Speicher) für Debug und Messungen. */
+  getRenderInfo(): { calls: number; triangles: number; geometries: number; textures: number } {
+    const info = this.renderer.three.info;
+    return {
+      calls: info.render.calls,
+      triangles: info.render.triangles,
+      geometries: info.memory.geometries,
+      textures: info.memory.textures,
+    };
+  }
+
   getSession(): Session | null {
     return this.session;
   }
@@ -285,6 +296,8 @@ export class App {
     session.view.setReducedMotion(this.save.data.settings.reducedMotion);
     this.renderer.scene.add(session.view.root);
     this.rig.update(session.world, 0, true);
+    // Shader vorab kompilieren (verhindert Ruckler beim ersten Treffer).
+    this.renderer.three.compile(this.renderer.scene, this.renderer.camera);
   }
 
   private goTo(state: AppState): void {

@@ -11,7 +11,7 @@ const _euler = new THREE.Euler();
 const _scale = new THREE.Vector3();
 const _mat = new THREE.Matrix4();
 const TRENCH_DEPTH = 0.25;
-const DRAW_DISTANCE = 120;
+const DRAW_DISTANCE = 100;
 
 export class EnemyView {
   readonly root = new THREE.Group();
@@ -22,7 +22,7 @@ export class EnemyView {
   constructor(level: LevelDef) {
     const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6 });
     this.mesh = new THREE.InstancedMesh(
-      createSoldierGeometry(RED_PALETTE),
+      createSoldierGeometry(RED_PALETTE, 'low'),
       material,
       CONFIG.enemy.maxEnemies,
     );
@@ -41,9 +41,10 @@ export class EnemyView {
   sync(world: WorldState): void {
     const e = world.enemies;
     const sz = world.squad.z;
+    let n = 0;
     for (let i = 0; i < e.count; i++) {
       const z = e.z[i];
-      const far = z - sz > DRAW_DISTANCE;
+      if (z - sz > DRAW_DISTANCE) continue;
       const h = e.horde[i];
       const inTrench = z >= this.trenchZ[h * 2] && z <= this.trenchZ[h * 2 + 1];
       const charging = e.charging[i] === 1;
@@ -51,12 +52,11 @@ export class EnemyView {
       _pos.set(e.x[i], (inTrench ? -TRENCH_DEPTH : 0) + bob, -z);
       _euler.set(charging ? 0.12 : 0, Math.PI, charging ? Math.sin(e.animPhase[i]) * 0.08 : 0);
       _quat.setFromEuler(_euler);
-      const sc = far ? 0 : 1;
-      _scale.set(sc, sc, sc);
+      _scale.set(1, 1, 1);
       _mat.compose(_pos, _quat, _scale);
-      this.mesh.setMatrixAt(i, _mat);
+      this.mesh.setMatrixAt(n++, _mat);
     }
-    this.mesh.count = e.count;
+    this.mesh.count = n;
     this.mesh.instanceMatrix.needsUpdate = true;
   }
 

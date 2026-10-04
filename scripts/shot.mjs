@@ -31,10 +31,12 @@ page.on('console', (m) => logs.push(`[${m.type()}] ${m.text()}`));
 page.on('pageerror', (e) => logs.push(`[pageerror] ${e.message}`));
 await page.goto(base + url);
 await page.waitForTimeout(wait);
-// Optionale Aktionen: --actions "down:195,600;move:100,600;wait:500;up;key:ArrowLeft;click:195,400;shot:name.png"
+// Optionale Aktionen: --actions "down:195,600|move:100,600|wait:500|up|key:ArrowLeft|click:195,400|shot:name.png|eval:js"
 const actions = opt('actions', '');
-for (const raw of actions.split(';').filter(Boolean)) {
-  const [cmd, arg = ''] = raw.split(':');
+for (const raw of actions.split('|').filter(Boolean)) {
+  const idx = raw.indexOf(':');
+  const cmd = idx < 0 ? raw : raw.slice(0, idx);
+  const arg = idx < 0 ? '' : raw.slice(idx + 1);
   const [ax, ay] = arg.split(',').map(Number);
   if (cmd === 'down') {
     await page.mouse.move(ax, ay);

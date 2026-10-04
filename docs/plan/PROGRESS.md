@@ -102,7 +102,7 @@ Gesamt: **86 Schritte**.
 ## Phase 9 – Qualität & Deployment (M5)  ([phase-9-quality-deploy.md](phase-9-quality-deploy.md))
 
 - [x] 9.1 – Qualitätsstufen und Auto-Qualität
-- [ ] 9.2 – Performance-Durchgang
+- [x] 9.2 – Performance-Durchgang
 - [ ] 9.3 – E2E-Smoke-Test mit Playwright
 - [ ] 9.4 – Deployment auf GitHub Pages
 - [ ] 9.5 – PWA (Meilenstein M5)

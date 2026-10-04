@@ -75,6 +75,7 @@ export interface DebugApi {
     heroActive: boolean;
     fps: number;
   } | null;
+  renderInfo(): { calls: number; triangles: number; geometries: number; textures: number };
   start(level: number): void;
   skipTo(z: number): void;
   win(): void;
@@ -99,6 +100,9 @@ export function installDebugApi(app: App): void {
         heroActive: w.hero.active,
         fps: app.fps,
       };
+    },
+    renderInfo() {
+      return app.getRenderInfo();
     },
     start(level) {
       app.startLevel(level);

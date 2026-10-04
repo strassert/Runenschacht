@@ -36,15 +36,31 @@ export function mergeParts(parts: THREE.BufferGeometry[]): THREE.BufferGeometry 
 const MODEL_SCALE = 1.45;
 
 /** Low-Poly-Soldat (~250 Dreiecke), Höhe ≈ 0.75 m, Füße bei y = 0, Blick nach −Z (three). */
-export function createSoldierGeometry(p: SoldierPalette): THREE.BufferGeometry {
-  const torso = paint(new THREE.CapsuleGeometry(0.14, 0.22, 3, 8), p.body).translate(0, 0.42, 0);
-  const head = paint(new THREE.SphereGeometry(0.11, 10, 8), p.skin).translate(0, 0.68, 0);
+export function createSoldierGeometry(
+  p: SoldierPalette,
+  detail: 'normal' | 'low' = 'normal',
+): THREE.BufferGeometry {
+  const low = detail === 'low';
+  const torso = paint(new THREE.CapsuleGeometry(0.14, 0.22, low ? 1 : 3, low ? 6 : 8), p.body).translate(
+    0,
+    0.42,
+    0,
+  );
+  const head = paint(new THREE.SphereGeometry(0.11, low ? 6 : 10, low ? 5 : 8), p.skin).translate(0, 0.68, 0);
   const helmet = paint(
-    new THREE.SphereGeometry(0.12, 10, 6, 0, Math.PI * 2, 0, Math.PI / 2),
+    new THREE.SphereGeometry(0.12, low ? 6 : 10, low ? 3 : 6, 0, Math.PI * 2, 0, Math.PI / 2),
     p.dark,
   ).translate(0, 0.7, 0);
-  const legL = paint(new THREE.CylinderGeometry(0.05, 0.05, 0.28, 6), p.dark).translate(-0.07, 0.14, 0);
-  const legR = paint(new THREE.CylinderGeometry(0.05, 0.05, 0.28, 6), p.dark).translate(0.07, 0.14, 0);
+  const legL = paint(new THREE.CylinderGeometry(0.05, 0.05, 0.28, low ? 4 : 6), p.dark).translate(
+    -0.07,
+    0.14,
+    0,
+  );
+  const legR = paint(new THREE.CylinderGeometry(0.05, 0.05, 0.28, low ? 4 : 6), p.dark).translate(
+    0.07,
+    0.14,
+    0,
+  );
   const gun = paint(new THREE.BoxGeometry(0.05, 0.06, 0.38), p.gun).translate(0.1, 0.45, -0.18);
   const pack = paint(new THREE.BoxGeometry(0.18, 0.2, 0.1), p.dark).translate(0, 0.45, 0.12);
   const merged = mergeParts([torso, head, helmet, legL, legR, gun, pack]);
