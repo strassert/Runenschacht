@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type { SimEvent } from '../../core/events';
 import type { LevelDef } from '../../core/level/types';
 import type { WorldState } from '../../core/types';
-import type { Quality } from '../quality';
+import { QUALITY_PROFILES, type Quality } from '../quality';
 import { Particles } from '../fx/Particles';
 import { FloatingText } from '../fx/FloatingText';
 import { WEAPONS } from '../../core/config';
@@ -39,6 +39,7 @@ export class WorldView {
   private readonly boss: BossView;
   private readonly countLabel: CountLabelView;
   private readonly particles = new Particles();
+  private readonly profile;
   private readonly texts = new FloatingText();
   private comboSlot = -1;
   private comboTotal = 0;
@@ -57,7 +58,8 @@ export class WorldView {
     this.gates = new GateView(world.gates);
     this.cards = new CardView(world.cards);
     this.enemies = new EnemyView(level);
-    this.squad = new SquadView(opts.shadows);
+    this.profile = QUALITY_PROFILES[opts.quality];
+    this.squad = new SquadView(opts.shadows, this.profile.maxRenderedSoldiers);
     this.bullets = new BulletView();
     this.hero = new HeroView(opts.shadows);
     this.boss = new BossView(opts.shadows);
@@ -84,7 +86,7 @@ export class WorldView {
   }
 
   setReducedMotion(on: boolean): void {
-    this.particles.countScale = on ? 0.5 : 1;
+    this.particles.countScale = this.profile.particlesScale * (on ? 0.5 : 1);
   }
 
   /** Ereignisse der Simulation (für Animationen/Effekte). */

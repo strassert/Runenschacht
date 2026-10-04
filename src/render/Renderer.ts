@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import type { QualityProfile } from './quality';
 
 export interface RendererOptions {
   canvas: HTMLCanvasElement;
@@ -52,6 +53,20 @@ export class Renderer {
     this.camera.aspect = w / h;
     this.camera.updateProjectionMatrix();
     for (const cb of this.listeners) cb(w, h);
+  }
+
+  /** Wendet zur Laufzeit änderbare Qualitätsparameter an (Pixelratio, Schatten). */
+  applyProfile(p: QualityProfile): void {
+    this.three.setPixelRatio(Math.min(window.devicePixelRatio, p.maxPixelRatio));
+    this.three.setSize(this.width, this.height, false);
+    if (this.three.shadowMap.enabled !== p.shadows) {
+      this.three.shadowMap.enabled = p.shadows;
+      this.scene.traverse((o) => {
+        const mat = (o as THREE.Mesh).material;
+        if (Array.isArray(mat)) mat.forEach((m) => (m.needsUpdate = true));
+        else if (mat) mat.needsUpdate = true;
+      });
+    }
   }
 
   onResize(cb: (width: number, height: number) => void): void {

@@ -6,7 +6,7 @@ import { InputController } from '../input/InputController';
 import { SaveManager, type Settings } from '../persistence/SaveManager';
 import { CameraRig } from '../render/CameraRig';
 import { Lighting } from '../render/Lighting';
-import type { Quality } from '../render/quality';
+import { AutoQualityGovernor, QUALITY_PROFILES, initialAutoQuality, type Quality } from '../render/quality';
 import { Renderer } from '../render/Renderer';
 import { applyFog, createSky } from '../render/Sky';
 import { AudioEngine } from '../audio/AudioEngine';
@@ -60,6 +60,8 @@ export class App {
   private autoplay = false;
   private seedOverride: number | null = null;
   private qualityOverride: Quality | null = null;
+  private activeQuality: Quality = 'medium';
+  private governor: AutoQualityGovernor | null = null;
   private timeScale = 1;
   private fpsMeter: FpsMeter | null = null;
   private lastResultInfo: { progress: number } = { progress: 0 };
@@ -78,10 +80,17 @@ export class App {
     const uiRoot = root.querySelector<HTMLElement>('#ui-root');
     if (!canvas || !uiRoot) throw new Error('#game-canvas oder #ui-root fehlt');
 
-    this.renderer = new Renderer({ canvas, maxPixelRatio: 2, shadows: true, antialias: true });
+    this.activeQuality = this.resolveQuality();
+    const profile = QUALITY_PROFILES[this.activeQuality];
+    this.renderer = new Renderer({
+      canvas,
+      maxPixelRatio: profile.maxPixelRatio,
+      shadows: profile.shadows,
+      antialias: profile.antialias,
+    });
     this.rig = new CameraRig(this.renderer.camera);
     this.renderer.onResize((w, h) => this.rig.setAspect(w / h));
-    this.lighting = new Lighting(true);
+    this.lighting = new Lighting(profile.shadows);
     this.renderer.scene.add(this.lighting.root);
     this.sky = createSky(this.lighting.sunDirection);
     this.renderer.scene.add(this.sky);
@@ -150,6 +159,7 @@ export class App {
     this.ui.register('settings', this.settings);
 
     if (params?.debug) this.fpsMeter = new FpsMeter(root);
+    this.setupQuality();
     this.applySettings();
     this.ui.show('loading');
     this.loop = new GameLoop((dt) => this.frame(dt));
@@ -225,7 +235,21 @@ export class App {
     if (this.qualityOverride) return this.qualityOverride;
     const q = this.save.data.settings.quality;
     if (q !== 'auto') return q;
-    return window.matchMedia?.('(pointer: coarse)').matches ? 'medium' : 'high';
+    return initialAutoQuality(window.matchMedia?.('(pointer: coarse)').matches ?? false);
+  }
+
+  /** Setzt aktive Qualität und Auto-Regler gemäß Einstellung. */
+  private setupQuality(): void {
+    const auto = !this.qualityOverride && this.save.data.settings.quality === 'auto';
+    this.applyQuality(this.resolveQuality());
+    this.governor = auto ? new AutoQualityGovernor(this.activeQuality) : null;
+  }
+
+  private applyQuality(q: Quality): void {
+    this.activeQuality = q;
+    const profile = QUALITY_PROFILES[q];
+    this.renderer.applyProfile(profile);
+    this.lighting.setShadows(profile.shadows);
   }
 
   private createSession(levelId: number): void {
@@ -247,8 +271,8 @@ export class App {
       level,
       modifiers: modifiersFromUpgrades(this.save.data.upgrades),
       autoplay: this.autoplay,
-      quality: this.resolveQuality(),
-      shadows: true,
+      quality: this.activeQuality,
+      shadows: QUALITY_PROFILES[this.activeQuality].shadows,
     });
     session.timeScale = this.timeScale;
     session.addListener((e, w) => {
@@ -316,6 +340,7 @@ export class App {
     this.save.update((d) => {
       Object.assign(d.settings, patch);
     });
+    if (patch.quality !== undefined) this.setupQuality();
     this.applySettings();
   }
 
@@ -368,6 +393,8 @@ export class App {
         this.sfx.update(s.world, frameDt);
         this.feedback.update(s.world, frameDt);
         this.hud.update(s.world, this.save.data.coins);
+        const next = this.governor?.sample(frameDt * 1000);
+        if (next) this.applyQuality(next);
         if (s.sim.isFinished()) this.onFinished();
       } else {
         s.view.sync(s.world, frameDt);

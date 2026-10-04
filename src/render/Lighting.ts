@@ -14,7 +14,7 @@ export class Lighting {
 
     this.sun = new THREE.DirectionalLight(0xffd29a, 2.4);
     this.sun.castShadow = shadows;
-    if (shadows) {
+    {
       const sh = this.sun.shadow;
       sh.mapSize.set(1024, 1024);
       const cam = sh.camera;
@@ -33,6 +33,10 @@ export class Lighting {
     const fill = new THREE.DirectionalLight(0x9fc3ff, 0.35);
     fill.position.set(8, 10, 12);
     this.root.add(fill);
+  }
+
+  setShadows(on: boolean): void {
+    this.sun.castShadow = on;
   }
 
   /** Schattenkamera folgt dem Trupp. */

@@ -4,7 +4,7 @@ import { disposeObject } from '../dispose';
 import { createPalmGeometry } from '../models/palm';
 import { createRockGeometry } from '../models/rock';
 import { paint } from '../models/soldier';
-import type { Quality } from '../quality';
+import { QUALITY_PROFILES, type Quality } from '../quality';
 import { textureRng } from '../textures/canvas';
 import { createWaterfallTexture } from '../textures/waterTexture';
 
@@ -44,7 +44,7 @@ export class EnvironmentView {
     const rnd = textureRng(level.seed * 7 + 13);
     const length = level.arenaZ + 140;
     const zFrom = -40;
-    const density = quality === 'low' ? 0.5 : quality === 'high' ? 1.3 : 1;
+    const density = QUALITY_PROFILES[quality].environmentDensity;
 
     // 1) Dschungelboden tief unten
     const ground = new THREE.Mesh(
