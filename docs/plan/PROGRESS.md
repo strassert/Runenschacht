@@ -42,8 +42,8 @@ Gesamt: **86 Schritte**.
 - [x] 3.8 – Boss
 - [x] 3.9 – Trupp schießt
 - [x] 3.10 – Projektile: Flug, Treffer, Schaden
-- [ ] 3.11 – Sieg/Niederlage
-- [ ] 3.12 – `Simulation`-Klasse und Wertung
+- [x] 3.11 – Sieg/Niederlage
+- [x] 3.12 – `Simulation`-Klasse und Wertung
 - [ ] 3.13 – Autoplay-Bot und Integrationstests (Meilenstein M1)
 
 ## Phase 4 – Rendering (M2)  ([phase-4-rendering.md](phase-4-rendering.md))
