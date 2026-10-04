@@ -59,7 +59,7 @@ Gesamt: **86 Schritte**.
 - [x] 4.9 – Bonus-Blöcke (BlockView)
 - [x] 4.10 – Tore (GateView)
 - [x] 4.11 – Upgrade-Karten (CardView)
-- [ ] 4.12 – Projektile (BulletView)
+- [x] 4.12 – Projektile (BulletView)
 - [ ] 4.13 – Held und Boss
 - [ ] 4.14 – Umgebung (Dschungel, Klippen, Wasserfälle, Berge)
 - [ ] 4.15 – WorldView, Zahlen-Label über dem Trupp, Meilenstein M2
