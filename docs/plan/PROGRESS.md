@@ -1,0 +1,125 @@
+# Fortschritt
+
+Nach jedem Schritt den Haken setzen (`- [x]`) und im selben Commit committen.
+Reihenfolge strikt von oben nach unten.
+Gesamt: **86 Schritte**.
+
+
+## Phase 0 – Projekt-Setup  ([phase-0-setup.md](phase-0-setup.md))
+
+- [ ] 0.1 – Vite/TypeScript-Grundgerüst
+- [ ] 0.2 – Tests, Lint, Format, `check`-Skript
+- [ ] 0.3 – Ordnerstruktur, README, Editor-Settings
+- [ ] 0.4 – GitHub Actions CI
+
+## Phase 1 – Core-Grundlagen  ([phase-1-core.md](phase-1-core.md))
+
+- [ ] 1.1 – Zentrale Konfiguration
+- [ ] 1.2 – Mathe-Helfer
+- [ ] 1.3 – Deterministischer Zufallsgenerator
+- [ ] 1.4 – Level-Typen und Simulations-Ereignisse
+- [ ] 1.5 – Objekt-Pools für Projektile und Gegner
+- [ ] 1.6 – Welt-Typen vervollständigen
+- [ ] 1.7 – Formation (Phyllotaxis-Spirale)
+- [ ] 1.8 – Räumliche Z-Buckets (Broadphase)
+- [ ] 1.9 – Shop-Formeln und Laufzeit-Modifikatoren
+
+## Phase 2 – Level-Daten  ([phase-2-levels.md](phase-2-levels.md))
+
+- [ ] 2.1 – Level-Expansion
+- [ ] 2.2 – Level-Validierung
+- [ ] 2.3 – Level 1 bis 5
+
+## Phase 3 – Simulation (M1)  ([phase-3-simulation.md](phase-3-simulation.md))
+
+- [ ] 3.1 – Welt erzeugen und Welt-Helfer
+- [ ] 3.2 – Truppbewegung
+- [ ] 3.3 – Bonus-Blöcke einsammeln
+- [ ] 3.4 – Tore
+- [ ] 3.5 – Karten: Belohnung und Wand
+- [ ] 3.6 – Gegnerhorde
+- [ ] 3.7 – Held: Folgen und Schießen
+- [ ] 3.8 – Boss
+- [ ] 3.9 – Trupp schießt
+- [ ] 3.10 – Projektile: Flug, Treffer, Schaden
+- [ ] 3.11 – Sieg/Niederlage
+- [ ] 3.12 – `Simulation`-Klasse und Wertung
+- [ ] 3.13 – Autoplay-Bot und Integrationstests (Meilenstein M1)
+
+## Phase 4 – Rendering (M2)  ([phase-4-rendering.md](phase-4-rendering.md))
+
+- [ ] 4.1 – Renderer, Koordinaten, Vorschau-Harness
+- [ ] 4.2 – Kamera-Rig
+- [ ] 4.3 – Licht, Himmel, Nebel
+- [ ] 4.4 – Prozedurale Texturen (Canvas)
+- [ ] 4.5 – Brücke (TrackView)
+- [ ] 4.6 – Soldatenmodell und SquadView
+- [ ] 4.7 – Gegnerhorde (EnemyView)
+- [ ] 4.8 – Zahlen-Labels
+- [ ] 4.9 – Bonus-Blöcke (BlockView)
+- [ ] 4.10 – Tore (GateView)
+- [ ] 4.11 – Upgrade-Karten (CardView)
+- [ ] 4.12 – Projektile (BulletView)
+- [ ] 4.13 – Held und Boss
+- [ ] 4.14 – Umgebung (Dschungel, Klippen, Wasserfälle, Berge)
+- [ ] 4.15 – WorldView, Zahlen-Label über dem Trupp, Meilenstein M2
+
+## Phase 5 – Eingabe & Game-Loop (M3)  ([phase-5-input-loop.md](phase-5-input-loop.md))
+
+- [ ] 5.1 – InputController
+- [ ] 5.2 – GameLoop, Session und App (ersetzt Vorschau)
+- [ ] 5.3 – Zustandsmaschine
+- [ ] 5.4 – Debug-Werkzeuge (Meilenstein M3)
+
+## Phase 6 – Funktionale UI  ([phase-6-ui.md](phase-6-ui.md))
+
+- [ ] 6.1 – Styles, DOM-Helfer, UIManager, Schrift
+- [ ] 6.2 – Speicherstand (SaveManager)
+- [ ] 6.3 – HUD
+- [ ] 6.4 – Hauptmenü und Levelauswahl
+- [ ] 6.5 – Pause
+- [ ] 6.6 – Ergebnisbildschirm
+- [ ] 6.7 – Shop
+- [ ] 6.8 – Einstellungen
+- [ ] 6.9 – Kompletter Ablauf verdrahten
+
+## Phase 7 – Audio & Effekte  ([phase-7-audio-fx.md](phase-7-audio-fx.md))
+
+- [ ] 7.1 – AudioEngine
+- [ ] 7.2 – Synthetisierte Soundeffekte
+- [ ] 7.3 – Musik
+- [ ] 7.4 – Partikel
+- [ ] 7.5 – Schwebende Zahlen
+- [ ] 7.6 – Screenshake, Treffer-Vignette, Vibration
+
+## Phase 8 – Inhalte & Balancing (M4)  ([phase-8-content-balancing.md](phase-8-content-balancing.md))
+
+- [ ] 8.1 – Level 6 bis 10
+- [ ] 8.2 – Balancing-Harness
+- [ ] 8.3 – Endlos-Generator
+- [ ] 8.4 – Endlosmodus im Spiel (Meilenstein M4)
+
+## Phase 9 – Qualität & Deployment (M5)  ([phase-9-quality-deploy.md](phase-9-quality-deploy.md))
+
+- [ ] 9.1 – Qualitätsstufen und Auto-Qualität
+- [ ] 9.2 – Performance-Durchgang
+- [ ] 9.3 – E2E-Smoke-Test mit Playwright
+- [ ] 9.4 – Deployment auf GitHub Pages
+- [ ] 9.5 – PWA (Meilenstein M5)
+
+## Phase 10 – UI/UX-Verbesserung (M6)  ([phase-10-ui-ux-polish.md](phase-10-ui-ux-polish.md))
+
+- [ ] 10.1 – UX-Audit und Baseline-Screenshots
+- [ ] 10.2 – Design-Tokens, Icons und Komponenten
+- [ ] 10.3 – Layout-Rahmen, Safe Areas, Desktop-Darstellung
+- [ ] 10.4 – HUD-Redesign
+- [ ] 10.5 – Onboarding und kontextuelle Hinweise
+- [ ] 10.6 – Spielgefühl und Rückmeldung („Juice“)
+- [ ] 10.7 – Steuerungs-Feinschliff
+- [ ] 10.8 – Übergänge, Ladebildschirm, Fortsetzen-Countdown
+- [ ] 10.9 – Ergebnisbildschirm verbessern
+- [ ] 10.10 – Menü, Levelkarte und Shop verbessern
+- [ ] 10.11 – Barrierefreiheit
+- [ ] 10.12 – Audio-UX
+- [ ] 10.13 – Mobile-Feinschliff
+- [ ] 10.14 – Abschluss-Review (Meilenstein M6)
