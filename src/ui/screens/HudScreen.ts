@@ -36,6 +36,13 @@ export class HudScreen extends BaseScreen {
   );
   private readonly markerLayer = h('div', { class: 'hud-markers' });
   private markers: Marker[] = [];
+  private world: WorldState | null = null;
+  private readonly combo = h('div', { class: 'hud-combo' });
+  private readonly banner = h('div', { class: 'hud-banner' });
+  private readonly gateResult = h('div', { class: 'hud-gate-result' });
+  private comboCount = 0;
+  private lastBlockMs = -1e9;
+  private comboHideAt = 0;
   private lastTier = -1;
   private lastCoins = -1;
   private hintVisible = true;
@@ -60,7 +67,16 @@ export class HudScreen extends BaseScreen {
     );
     this.weaponBox.append(icon('sword', 16), this.weaponName, h('span', { class: 'pips' }, ...this.pips));
     this.heroWrap.append(icon('heart', 16), this.heroBar.el);
-    this.el.append(top, this.bossWrap, this.weaponBox, this.heroWrap, this.hint);
+    this.el.append(
+      top,
+      this.bossWrap,
+      this.weaponBox,
+      this.heroWrap,
+      this.hint,
+      this.combo,
+      this.banner,
+      this.gateResult,
+    );
     this.bossWrap.classList.add('hud-boss--hidden');
     this.heroWrap.style.display = 'none';
   }
@@ -72,6 +88,8 @@ export class HudScreen extends BaseScreen {
 
   /** Baut die Meilenstein-Marker (Karten, Tore, Boss) für eine neue Welt. */
   bind(world: WorldState): void {
+    this.world = world;
+    this.comboCount = 0;
     this.markerLayer.replaceChildren();
     this.markers = [];
     const add = (z: number, name: IconName, cls: string, done: () => boolean): void => {
@@ -96,6 +114,7 @@ export class HudScreen extends BaseScreen {
 
   /** Pro Frame aufrufen; schreibt nur geänderte Werte ins DOM. */
   update(world: WorldState, coins: number): void {
+    this.tick();
     this.progress.set(world.squad.z / world.arenaZ);
     for (const m of this.markers) {
       const d = m.done();
@@ -141,8 +160,64 @@ export class HudScreen extends BaseScreen {
   }
 
   onEvent(event: SimEvent): void {
-    if (event.type === 'weaponUpgraded') this.popElement(this.weaponBox);
-    else if (event.type === 'heroJoined') this.popElement(this.heroWrap);
+    switch (event.type) {
+      case 'weaponUpgraded':
+        this.popElement(this.weaponBox);
+        this.showBanner('sword', `${WEAPONS[event.tier].name.toUpperCase()}!`);
+        break;
+      case 'heroJoined':
+        this.popElement(this.heroWrap);
+        this.showBanner('shield', 'HELD SCHLIESST SICH AN!');
+        break;
+      case 'cardUnlocked': {
+        const card = this.world?.cards[event.id];
+        if (event.kind === 'soldiers' && card) this.showBanner('heart', `+${card.reward} SOLDATEN!`);
+        break;
+      }
+      case 'gatePassed': {
+        const good = event.after >= event.before;
+        const sym = { add: '+', sub: '\u2212', mul: '\u00d7', div: '\u00f7' }[event.op];
+        this.gateResult.textContent = `${sym}${event.value}`;
+        this.gateResult.className = `hud-gate-result ${good ? 'is-good' : 'is-bad'} is-on`;
+        this.restart(this.gateResult);
+        break;
+      }
+      case 'blockCollected': {
+        const now = performance.now();
+        this.comboCount = now - this.lastBlockMs <= 600 ? this.comboCount + 1 : 1;
+        this.lastBlockMs = now;
+        if (this.comboCount >= 5) {
+          this.combo.textContent = `KOMBO \u00d7${this.comboCount}`;
+          this.combo.classList.add('is-on');
+          this.restart(this.combo);
+          this.comboHideAt = now + 900;
+        }
+        break;
+      }
+      default:
+        break;
+    }
+  }
+
+  /** Blendet abgelaufene Kombo-/Tor-Anzeigen aus (pro Frame). */
+  tick(): void {
+    if (this.comboHideAt && performance.now() > this.comboHideAt) {
+      this.comboHideAt = 0;
+      this.combo.classList.remove('is-on');
+    }
+  }
+
+  private showBanner(name: IconName, text: string): void {
+    this.banner.replaceChildren(icon(name, 28), h('span', null, text));
+    this.banner.classList.add('is-on');
+    this.restart(this.banner);
+    window.setTimeout(() => this.banner.classList.remove('is-on'), 1000);
+  }
+
+  private restart(el: HTMLElement): void {
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
   }
 
   private popElement(el: HTMLElement): void {

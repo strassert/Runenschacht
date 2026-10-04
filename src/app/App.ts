@@ -10,6 +10,7 @@ import { AutoQualityGovernor, QUALITY_PROFILES, initialAutoQuality, type Quality
 import { Renderer } from '../render/Renderer';
 import { applyFog, createSky } from '../render/Sky';
 import { AudioEngine } from '../audio/AudioEngine';
+import type { SimEvent } from '../core/events';
 import { MusicPlayer } from '../audio/music';
 import { SfxDirector } from '../audio/SfxDirector';
 import { setButtonClickHook } from '../ui/components/Button';
@@ -56,6 +57,8 @@ export class App {
   private readonly tutorialOverlay = new TutorialOverlay();
   private tutorial: TutorialDirector | null = null;
   private tipTimer = 0;
+  private bossSlowLeft = 0;
+  private flashEl: HTMLElement | null = null;
   private slowActive = false;
   private slowElapsed = 0;
   private tipIsDrag = false;
@@ -116,7 +119,8 @@ export class App {
     });
 
     const vignette = h('div', { class: 'hit-vignette' });
-    uiRoot.appendChild(vignette);
+    this.flashEl = h('div', { class: 'screen-flash' });
+    uiRoot.append(vignette, this.flashEl);
     this.feedback = new FeedbackDirector(vignette, () => this.save.data.settings);
     // Handy im Querformat: Spiel pausieren, solange der Drehen-Hinweis sichtbar ist
     const landscape = window.matchMedia?.(
@@ -316,6 +320,7 @@ export class App {
       this.sfx.onEvent(e, w);
       this.feedback.onEvent(e, w);
       this.tutorial?.onEvent(e);
+      this.onJuiceEvent(e);
     });
     this.session = session;
     session.view.attachCamera(this.renderer.camera);
@@ -385,10 +390,29 @@ export class App {
 
   private applySettings(): void {
     const st = this.save.data.settings;
+    document.documentElement.classList.toggle('reduced-motion', st.reducedMotion);
     this.input.sensitivity = st.sensitivity;
     this.audio.setSoundEnabled(st.sound);
     this.audio.setMusicEnabled(st.music);
     this.session?.view.setReducedMotion(st.reducedMotion);
+  }
+
+  /** Kamera-/Zeit-Effekte (entfallen bei reduzierter Bewegung). */
+  private onJuiceEvent(e: SimEvent): void {
+    if (this.save.data.settings.reducedMotion) return;
+    if (e.type === 'gatePassed' && e.after >= e.before) this.rig.fovPulse = 1;
+    if (e.type === 'bossDefeated') {
+      this.bossSlowLeft = 0.8;
+      this.rig.distanceScale = 0.95;
+      const f = this.flashEl;
+      if (f) {
+        f.style.transition = 'none';
+        f.style.opacity = '0.6';
+        void f.offsetWidth;
+        f.style.transition = 'opacity 0.25s ease-out';
+        f.style.opacity = '0';
+      }
+    }
   }
 
   /** Hinweise prüfen, anzeigen und Zeitlupe steuern. */
@@ -422,6 +446,10 @@ export class App {
         this.tipTimer = 0;
         this.ui.hide('tutorial');
       }
+    }
+    if (this.bossSlowLeft > 0) {
+      this.bossSlowLeft -= frameDt;
+      s.timeScale = this.timeScale * (this.bossSlowLeft > 0 ? 0.25 : 1);
     }
     // Zeitlupe: 1,4 s langsam, danach in 0,3 s zurück auf Normalgeschwindigkeit
     if (this.slowActive) {

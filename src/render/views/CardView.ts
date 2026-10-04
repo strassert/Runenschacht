@@ -26,6 +26,7 @@ interface CardNode {
   shown: number;
   lastDraw: number;
   pulseUntil: number;
+  wobbleUntil: number;
   endedAt: number;
 }
 
@@ -73,6 +74,7 @@ export class CardView {
         shown,
         lastDraw: -1,
         pulseUntil: -1,
+        wobbleUntil: -1,
         endedAt: -1,
       });
     }
@@ -93,6 +95,7 @@ export class CardView {
           if (t - n.lastDraw >= REDRAW_INTERVAL) {
             n.shown = hp;
             n.lastDraw = t;
+            n.wobbleUntil = t + 0.06;
             drawCardFace(n.ctx, c.kind, String(hp), 512, 384, c.reward);
             n.texture.needsUpdate = true;
           }
@@ -100,7 +103,11 @@ export class CardView {
         const pulsing = t < n.pulseUntil;
         const s = pulsing ? 1.04 : 1;
         n.group.scale.set(s, s, s);
-        n.frontMat.emissiveIntensity = pulsing ? BASE_GLOW + 0.4 : BASE_GLOW;
+        const low = c.hp / c.maxHp < 0.2;
+        n.frontMat.emissive.setHex(low ? 0xffd84d : 0xffffff);
+        const lowPulse = low ? 0.25 * (0.5 + 0.5 * Math.sin(t * 12)) : 0;
+        n.frontMat.emissiveIntensity = (pulsing ? BASE_GLOW + 0.4 : BASE_GLOW) + lowPulse;
+        n.group.rotation.z = t < n.wobbleUntil ? Math.sin(t * 120) * 0.035 : 0;
         continue;
       }
       if (n.endedAt < 0) n.endedAt = t;

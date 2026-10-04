@@ -510,3 +510,108 @@
     transform: translateX(70px);
   }
 }
+
+/* ---------- Feedback-Anzeigen ---------- */
+.hud-combo {
+  position: absolute;
+  right: calc(var(--safe-right) + var(--sp-3));
+  top: 42%;
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  color: var(--gold-400);
+  text-shadow: 0 3px 0 var(--gold-700);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hud-combo.is-on {
+  opacity: 1;
+  animation: pop-pill 0.4s var(--ease-back);
+}
+
+.hud-banner {
+  position: absolute;
+  left: 50%;
+  top: 32%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  color: var(--gold-400);
+  text-shadow: 0 4px 0 rgba(0, 0, 0, 0.55);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hud-banner.is-on {
+  animation: banner-in 0.9s var(--ease-back) forwards;
+}
+
+@keyframes banner-in {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 14px) scale(0.7);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1.08);
+  }
+  80% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -8px) scale(1);
+  }
+}
+
+.hud-gate-result {
+  position: absolute;
+  left: 50%;
+  top: 44%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-size: var(--fs-hero);
+  opacity: 0;
+  pointer-events: none;
+  text-shadow: 0 5px 0 rgba(0, 0, 0, 0.5);
+}
+
+.hud-gate-result.is-good {
+  color: #6dffb0;
+}
+
+.hud-gate-result.is-bad {
+  color: #ff6b6b;
+}
+
+.hud-gate-result.is-on {
+  animation: gate-result 0.6s var(--ease-out) forwards;
+}
+
+@keyframes gate-result {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.5);
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(-50%) scale(1.15);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1);
+  }
+}
+
+.screen-flash {
+  position: absolute;
+  inset: 0;
+  background: var(--white);
+  opacity: 0;
+  pointer-events: none;
+}

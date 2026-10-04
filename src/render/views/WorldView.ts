@@ -97,6 +97,10 @@ export class WorldView {
     switch (event.type) {
       case 'soldiersChanged':
         if (event.delta > 0) this.countLabel.pulse = 1;
+        if (event.delta < 0 && event.reason !== 'wall') {
+          const sq = this.world.squad;
+          p.burst(sq.x, 0.9, sq.z + sq.radius * 0.8, 4, 0xff4a4a, 3, 0.5, { upward: 2 });
+        }
         if (event.reason === 'wall' && event.delta < 0) {
           this.texts.spawn(String(event.delta).replace('-', '\u2212'), event.x, 2, event.z, '#ff6b6b', 1.2);
         }

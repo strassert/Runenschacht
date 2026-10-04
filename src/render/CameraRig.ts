@@ -10,6 +10,9 @@ export class CameraRig {
   readonly shakeOffset = new THREE.Vector3();
   /** Zusätzlicher Skalierungsfaktor für die Distanz (Zoom-Effekte). */
   distanceScale = 1;
+  /** 0..1, wird pro Frame abgebaut; erhöht das Sichtfeld kurz (Tor-Puls). */
+  fovPulse = 0;
+  private appliedFov = VFOV;
 
   private baseDistance = 20;
   private distance = 20;
@@ -48,6 +51,13 @@ export class CameraRig {
       Math.sin(TILT) * this.distance,
       this.focus.z + Math.cos(TILT) * this.distance,
     );
+    this.fovPulse = Math.max(0, this.fovPulse - frameDt * 5);
+    const fov = VFOV + 3 * this.fovPulse;
+    if (Math.abs(fov - this.appliedFov) > 0.01) {
+      this.appliedFov = fov;
+      this.camera.fov = fov;
+      this.camera.updateProjectionMatrix();
+    }
     this.camera.lookAt(this.focus);
     this.camera.position.add(this.shakeOffset);
   }

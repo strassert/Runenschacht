@@ -18,6 +18,8 @@ export class EnemyView {
   private readonly mesh: THREE.InstancedMesh;
   /** Pro Horde: z-Bereich des Grabens (inkl. 3 m Rand). */
   private readonly trenchZ: Float32Array;
+  private readonly maxHp: Float32Array;
+  private readonly tint = new THREE.Color();
 
   constructor(level: LevelDef) {
     const material = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.6 });
@@ -29,10 +31,13 @@ export class EnemyView {
     this.mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     this.mesh.frustumCulled = false;
     this.mesh.count = 0;
+    this.mesh.setColorAt(0, this.tint.setRGB(1, 1, 1));
     this.root.add(this.mesh);
     const hordes = level.hordes ?? [];
     this.trenchZ = new Float32Array(hordes.length * 2);
+    this.maxHp = new Float32Array(hordes.length);
     hordes.forEach((h, i) => {
+      this.maxHp[i] = h.hp ?? 1;
       this.trenchZ[i * 2] = h.zStart - 3;
       this.trenchZ[i * 2 + 1] = h.zEnd + 3;
     });
@@ -54,10 +59,14 @@ export class EnemyView {
       _quat.setFromEuler(_euler);
       _scale.set(1, 1, 1);
       _mat.compose(_pos, _quat, _scale);
-      this.mesh.setMatrixAt(n++, _mat);
+      this.mesh.setMatrixAt(n, _mat);
+      const damaged = e.hp[i] < this.maxHp[h];
+      this.mesh.setColorAt(n, damaged ? this.tint.setRGB(2.4, 1.8, 1.8) : this.tint.setRGB(1, 1, 1));
+      n++;
     }
     this.mesh.count = n;
     this.mesh.instanceMatrix.needsUpdate = true;
+    if (this.mesh.instanceColor) this.mesh.instanceColor.needsUpdate = true;
   }
 
   dispose(): void {
