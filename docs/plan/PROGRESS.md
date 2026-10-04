@@ -49,7 +49,7 @@ Gesamt: **86 Schritte**.
 ## Phase 4 – Rendering (M2)  ([phase-4-rendering.md](phase-4-rendering.md))
 
 - [x] 4.1 – Renderer, Koordinaten, Vorschau-Harness
-- [ ] 4.2 – Kamera-Rig
+- [x] 4.2 – Kamera-Rig
 - [ ] 4.3 – Licht, Himmel, Nebel
 - [ ] 4.4 – Prozedurale Texturen (Canvas)
 - [ ] 4.5 – Brücke (TrackView)
