@@ -21,6 +21,11 @@ npm run dev     # Entwicklungsserver
 npm run check   # Typecheck, Lint, Format, Tests, Build
 ```
 
+## Online spielen
+
+Nach jedem Push auf `main` baut `.github/workflows/deploy.yml` das Spiel und veröffentlicht es auf GitHub Pages.
+Dazu in den Repository-Einstellungen unter *Pages → Source* **„GitHub Actions“** auswählen.
+
 ## Plan
 
 Siehe [`docs/plan/README.md`](docs/plan/README.md).
