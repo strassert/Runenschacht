@@ -598,3 +598,12 @@ body {
 .segmented__btn--on {
   background: var(--c-primary);
 }
+
+/* ---------- Treffer-Vignette ---------- */
+.hit-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(ellipse at center, rgba(229, 56, 59, 0) 45%, rgba(229, 56, 59, 0.75) 100%);
+}

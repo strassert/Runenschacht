@@ -11,6 +11,8 @@ import { AudioEngine } from '../audio/AudioEngine';
 import { MusicPlayer } from '../audio/music';
 import { SfxDirector } from '../audio/SfxDirector';
 import { setButtonClickHook } from '../ui/components/Button';
+import { FeedbackDirector } from './FeedbackDirector';
+import { h } from '../ui/dom';
 import { HudScreen } from '../ui/screens/HudScreen';
 import { LevelSelectScreen } from '../ui/screens/LevelSelectScreen';
 import { LoadingScreen } from '../ui/screens/LoadingScreen';
@@ -49,6 +51,7 @@ export class App {
 
   private readonly sfx = new SfxDirector(this.audio);
   private readonly music = new MusicPlayer(this.audio);
+  private feedback!: FeedbackDirector;
   private session: Session | null = null;
   private currentLevelId = 1;
   private autoplay = false;
@@ -91,6 +94,9 @@ export class App {
       if (document.hidden && this.machine.state === 'playing') this.pause();
     });
 
+    const vignette = h('div', { class: 'hit-vignette' });
+    uiRoot.appendChild(vignette);
+    this.feedback = new FeedbackDirector(vignette, () => this.save.data.settings);
     this.ui = new UIManager(uiRoot);
     this.menu = new MenuScreen({
       play: () => this.startLevel(this.nextLevelId()),
@@ -215,6 +221,7 @@ export class App {
       this.session.dispose();
     }
     this.currentLevelId = levelId;
+    this.feedback.reset();
     const session = new Session({
       level,
       modifiers: modifiersFromUpgrades(this.save.data.upgrades),
@@ -226,6 +233,7 @@ export class App {
     session.addListener((e, w) => {
       this.hud.onEvent(e);
       this.sfx.onEvent(e, w);
+      this.feedback.onEvent(e, w);
     });
     this.session = session;
     session.view.attachCamera(this.renderer.camera);
@@ -295,6 +303,7 @@ export class App {
     this.input.sensitivity = st.sensitivity;
     this.audio.setSoundEnabled(st.sound);
     this.audio.setMusicEnabled(st.music);
+    this.session?.view.setReducedMotion(st.reducedMotion);
   }
 
   private onFinished(): void {
@@ -333,11 +342,13 @@ export class App {
         const dx = this.input.consumeDeltaX() + this.input.getKeyAxis() * 10 * frameDt;
         s.update(frameDt, dx);
         this.sfx.update(s.world, frameDt);
+        this.feedback.update(s.world, frameDt);
         this.hud.update(s.world, this.save.data.coins);
         if (s.sim.isFinished()) this.onFinished();
       } else {
         s.view.sync(s.world, frameDt);
       }
+      this.feedback.shake.update(frameDt, this.rig.shakeOffset);
       this.rig.update(s.world, frameDt);
       this.lighting.update(s.world);
     }
