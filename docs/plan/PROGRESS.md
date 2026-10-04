@@ -7,7 +7,7 @@ Gesamt: **86 Schritte**.
 
 ## Phase 0 – Projekt-Setup  ([phase-0-setup.md](phase-0-setup.md))
 
-- [ ] 0.1 – Vite/TypeScript-Grundgerüst
+- [x] 0.1 – Vite/TypeScript-Grundgerüst
 - [ ] 0.2 – Tests, Lint, Format, `check`-Skript
 - [ ] 0.3 – Ordnerstruktur, README, Editor-Settings
 - [ ] 0.4 – GitHub Actions CI
