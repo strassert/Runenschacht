@@ -20,16 +20,16 @@ export function createPalmGeometry(): THREE.BufferGeometry {
   }
   const topY = segments * 0.8;
   for (let i = 0; i < 7; i++) {
-    const frond = new THREE.PlaneGeometry(0.9, 3.4, 1, 6);
+    const frond = new THREE.PlaneGeometry(0.8, 2.8, 1, 6);
     const pos = frond.getAttribute('position');
     for (let v = 0; v < pos.count; v++) {
-      const y = pos.getY(v) + 1.7; // 0..3.4
-      const k = y / 3.4;
+      const y = pos.getY(v) + 1.4; // 0..2.8
+      const k = y / 2.8;
       // Wedel krümmen sich nach unten und laufen spitz zu
-      pos.setZ(v, -k * k * 1.6);
+      pos.setZ(v, -k * k * 1.3);
       pos.setX(v, pos.getX(v) * (1 - k * 0.85));
     }
-    frond.translate(0, -1.7, 0);
+    frond.translate(0, -1.4, 0);
     frond.rotateX(-Math.PI / 2 + 0.5); // nach vorne/oben neigen
     frond.rotateY((i / 7) * Math.PI * 2);
     frond.translate(ox, topY, 0);

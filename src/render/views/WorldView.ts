@@ -87,6 +87,7 @@ export class WorldView {
 
   setReducedMotion(on: boolean): void {
     this.particles.countScale = this.profile.particlesScale * (on ? 0.5 : 1);
+    this.countLabel.reducedMotion = on;
   }
 
   /** Ereignisse der Simulation (für Animationen/Effekte). */

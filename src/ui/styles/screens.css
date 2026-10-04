@@ -42,32 +42,51 @@
 /* ---------- HUD ---------- */
 .hud-top {
   position: absolute;
-  top: calc(var(--safe-top) + var(--sp-2));
-  left: calc(var(--safe-left) + var(--sp-3));
-  right: calc(var(--safe-right) + var(--sp-3));
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: var(--sp-2);
+  padding: calc(var(--safe-top) + var(--sp-2)) calc(var(--safe-right) + var(--sp-3)) var(--sp-5)
+    calc(var(--safe-left) + var(--sp-3));
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0));
+  box-sizing: border-box;
+}
+
+.hud-center {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+  padding-top: 2px;
 }
 
 .hud-level {
   font-family: var(--font-display);
-  font-size: var(--fs-md);
-  padding: 6px 12px;
-  border-radius: var(--r-pill);
-  background: rgba(0, 0, 0, 0.5);
+  font-size: var(--fs-sm);
+  text-align: center;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.5);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hud-progress-wrap {
+  position: relative;
+  padding: 0 8px;
 }
 
 .hud-progress {
-  flex: 1;
-  max-width: 280px;
-  margin: 0 auto;
-  height: 14px;
+  height: 12px;
   border-radius: var(--r-pill);
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.55);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   overflow: hidden;
   position: relative;
+  box-sizing: border-box;
 }
 
 .hud-progress__fill {
@@ -78,35 +97,97 @@
   background: linear-gradient(90deg, var(--blue-500), var(--gold-400));
 }
 
+.hud-markers {
+  position: absolute;
+  inset: 0 8px;
+  pointer-events: none;
+}
+
+.hud-marker {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--ink-700);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  color: var(--white);
+  box-sizing: border-box;
+}
+
+.hud-marker--gate {
+  background: var(--blue-700);
+}
+
+.hud-marker--boss {
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  background: var(--red-700);
+}
+
+.hud-marker.is-done {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
 .hud-coins {
-  font-family: var(--font-display);
-  font-size: var(--fs-md);
-  padding: 6px 12px;
-  border-radius: var(--r-pill);
-  background: rgba(0, 0, 0, 0.5);
-  white-space: nowrap;
+  margin-top: 4px;
 }
 
 .hud-boss {
   position: absolute;
-  top: calc(var(--safe-top) + 64px);
+  top: calc(var(--safe-top) + 74px);
   left: 50%;
+  width: min(80%, 320px);
   transform: translateX(-50%);
-  width: min(70vw, 300px);
-  text-align: center;
+  transition:
+    opacity var(--t-med),
+    transform var(--t-slow) var(--ease-out);
   font-family: var(--font-display);
   font-size: var(--fs-sm);
+}
+
+.hud-boss--hidden {
+  opacity: 0;
+  transform: translate(-50%, -16px);
+}
+
+.hud-boss__head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
+}
+
+.bar__trail {
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  background: rgba(255, 255, 255, 0.85);
+  transition: transform 0.4s ease-out 0.3s;
+}
+
+.hud-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-display);
+  font-size: var(--fs-sm);
+  padding: 6px 12px;
+  border-radius: var(--r-sm);
+  background: rgba(0, 0, 0, 0.5);
+  opacity: 0.8;
 }
 
 .hud-bottom-left {
   position: absolute;
   left: calc(var(--safe-left) + var(--sp-3));
   bottom: calc(var(--safe-bottom) + var(--sp-3));
-  font-family: var(--font-display);
-  font-size: var(--fs-sm);
-  padding: 6px 12px;
-  border-radius: var(--r-sm);
-  background: rgba(0, 0, 0, 0.5);
 }
 
 .hud-bottom-right {
@@ -114,18 +195,39 @@
   right: calc(var(--safe-right) + var(--sp-3));
   bottom: calc(var(--safe-bottom) + var(--sp-3));
   width: 120px;
-  font-family: var(--font-display);
-  font-size: var(--fs-sm);
+}
+
+.hud-bottom-right .bar {
+  flex: 1;
+}
+
+.pop-anim {
+  animation: pop-pill 0.5s var(--ease-back);
+}
+
+@keyframes pop-pill {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.18);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .hud-hint {
   position: absolute;
   left: 50%;
-  bottom: calc(var(--safe-bottom) + 76px);
+  bottom: calc(var(--safe-bottom) + 64px);
   transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
   font-family: var(--font-display);
-  font-size: var(--fs-lg);
-  padding: 10px 18px;
+  font-size: var(--fs-md);
+  padding: 8px 16px;
   border-radius: var(--r-pill);
   background: rgba(0, 0, 0, 0.55);
   white-space: nowrap;

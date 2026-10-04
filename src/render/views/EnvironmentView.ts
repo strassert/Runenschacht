@@ -62,7 +62,7 @@ export class EnvironmentView {
     for (const side of [-1, 1]) {
       for (let z = zFrom; z < length; z += clusterStep) {
         const r = 3 + rnd() * 3.5;
-        clusters.push({ x: side * (9 + rnd() * 14), y: -10 + rnd() * 5, z: z + rnd() * clusterStep, r });
+        clusters.push({ x: side * (12 + rnd() * 14), y: -10 + rnd() * 5, z: z + rnd() * clusterStep, r });
       }
     }
     const blobs = new THREE.InstancedMesh(

@@ -20,5 +20,5 @@ export function makeMossMaterial(): THREE.MeshStandardMaterial {
 }
 
 export function makeTrenchMaterial(): THREE.MeshStandardMaterial {
-  return new THREE.MeshStandardMaterial({ color: 0x4b463e, roughness: 1, metalness: 0 });
+  return new THREE.MeshStandardMaterial({ color: 0x6a6256, roughness: 1, metalness: 0 });
 }

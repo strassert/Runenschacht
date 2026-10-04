@@ -189,7 +189,10 @@ export class App {
     this.createSession(levelId);
     const session = this.session!;
     this.ui.hideAll();
-    this.hud.setLabel(levelId > 1000 ? `Runde ${levelId - 1000}` : `Level ${levelId}`);
+    this.hud.setLabel(
+      levelId > 1000 ? `Endlos · Runde ${levelId - 1000}` : `Level ${levelId} · ${session.level.name}`,
+    );
+    this.hud.bind(session.world);
     this.ui.show('hud');
     if (this.machine.state !== 'playing') this.machine.go('playing');
     this.input.reset();
