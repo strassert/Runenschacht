@@ -15,7 +15,7 @@ Gesamt: **86 Schritte**.
 ## Phase 1 – Core-Grundlagen  ([phase-1-core.md](phase-1-core.md))
 
 - [x] 1.1 – Zentrale Konfiguration
-- [ ] 1.2 – Mathe-Helfer
+- [x] 1.2 – Mathe-Helfer
 - [ ] 1.3 – Deterministischer Zufallsgenerator
 - [ ] 1.4 – Level-Typen und Simulations-Ereignisse
 - [ ] 1.5 – Objekt-Pools für Projektile und Gegner
