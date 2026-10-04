@@ -43,9 +43,12 @@ export class Session {
   }
 
   /** Feste Simulationsschritte (Akkumulator), danach Ereignisse verteilen und View synchronisieren. */
-  update(frameDt: number, steerDeltaX: number): void {
+  update(frameDt: number, steerDeltaX: number, absoluteX: number | null = null): void {
     const dt = CONFIG.sim.dt;
-    if (!this.bot) this.sim.nudgeTargetX(steerDeltaX);
+    if (!this.bot) {
+      if (absoluteX !== null) this.sim.setTargetX(absoluteX);
+      else this.sim.nudgeTargetX(steerDeltaX);
+    }
     this.acc += frameDt * this.timeScale;
     const maxSteps = CONFIG.sim.maxStepsPerFrame * Math.max(1, this.timeScale);
     let steps = 0;

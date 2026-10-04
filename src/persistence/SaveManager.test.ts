@@ -45,6 +45,10 @@ describe('SaveManager', () => {
     expect(d.upgrades.fireRate).toBe(10);
     expect(d.settings.sound).toBe(true);
   });
+  it('keeps a valid control mode and rejects invalid ones', () => {
+    expect(sanitizeSave({ settings: { controlMode: 'absolute' } }).settings.controlMode).toBe('absolute');
+    expect(sanitizeSave({ settings: { controlMode: 'foo' } }).settings.controlMode).toBe('relative');
+  });
   it('rejects non-objects', () => {
     expect(sanitizeSave(42)).toEqual(defaultSave());
     expect(sanitizeSave(null)).toEqual(defaultSave());

@@ -317,3 +317,25 @@
 .pip--on {
   background: var(--gold-500);
 }
+
+/* ---------- Empfindlichkeits-Vorschau ---------- */
+.sens-strip {
+  position: relative;
+  height: 40px;
+  border-radius: var(--r-pill);
+  background: var(--ink-500);
+  touch-action: none;
+  pointer-events: auto;
+}
+
+.sens-dot {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  width: 28px;
+  height: 28px;
+  margin-left: -14px;
+  border-radius: 50%;
+  background: var(--blue-500);
+  border: 3px solid var(--white);
+}

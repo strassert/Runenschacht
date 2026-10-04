@@ -11,6 +11,8 @@ import {
 
 export type QualitySetting = 'auto' | 'low' | 'medium' | 'high';
 
+export type ControlMode = 'relative' | 'absolute';
+
 export interface Settings {
   sound: boolean;
   music: boolean;
@@ -18,6 +20,7 @@ export interface Settings {
   sensitivity: number;
   quality: QualitySetting;
   reducedMotion: boolean;
+  controlMode: ControlMode;
 }
 
 export interface SaveData {
@@ -53,6 +56,7 @@ export function defaultSave(): SaveData {
       sensitivity: 1.4,
       quality: 'auto',
       reducedMotion: false,
+      controlMode: 'relative',
     },
     tutorialSeen: {},
     stats: { runs: 0, wins: 0, enemiesKilled: 0, bestEndlessRound: 0 },
@@ -98,6 +102,7 @@ export function sanitizeSave(raw: unknown): SaveData {
     d.settings.haptics = bool(s.haptics, d.settings.haptics);
     d.settings.reducedMotion = bool(s.reducedMotion, d.settings.reducedMotion);
     d.settings.sensitivity = num(s.sensitivity, 0.5, 3, d.settings.sensitivity);
+    if (s.controlMode === 'relative' || s.controlMode === 'absolute') d.settings.controlMode = s.controlMode;
     if (s.quality === 'auto' || s.quality === 'low' || s.quality === 'medium' || s.quality === 'high') {
       d.settings.quality = s.quality;
     }

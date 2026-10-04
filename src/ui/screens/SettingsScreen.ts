@@ -1,4 +1,4 @@
-import type { QualitySetting, Settings } from '../../persistence/SaveManager';
+import type { ControlMode, QualitySetting, Settings } from '../../persistence/SaveManager';
 import { button } from '../components/Button';
 import { panel } from '../components/Panel';
 import { segmented } from '../components/Segmented';
@@ -21,6 +21,39 @@ const QUALITY_OPTIONS: readonly (readonly [QualitySetting, string])[] = [
   ['high', 'Hoch'],
 ];
 
+const CONTROL_OPTIONS: readonly (readonly [ControlMode, string])[] = [
+  ['relative', 'Ziehen (relativ)'],
+  ['absolute', 'Finger folgen'],
+];
+
+/** Mini-Feld: Punkt folgt dem Finger mit der eingestellten Empfindlichkeit. */
+function sensitivityPreview(getSensitivity: () => number): HTMLElement {
+  const dot = h('i', { class: 'sens-dot' });
+  const strip = h('div', { class: 'sens-strip', 'data-ui-interactive': true, 'aria-hidden': 'true' }, dot);
+  let pos = 0.5;
+  let lastX = 0;
+  let down = false;
+  strip.addEventListener('pointerdown', (e) => {
+    down = true;
+    lastX = e.clientX;
+    strip.setPointerCapture(e.pointerId);
+  });
+  strip.addEventListener('pointermove', (e) => {
+    if (!down) return;
+    const gameWidth = document.getElementById('app')?.clientWidth ?? 390;
+    const meters = (e.clientX - lastX) * (12 / gameWidth) * getSensitivity();
+    lastX = e.clientX;
+    pos = Math.max(0.03, Math.min(0.97, pos + meters / 12));
+    dot.style.left = `${pos * 100}%`;
+  });
+  const end = (): void => {
+    down = false;
+  };
+  strip.addEventListener('pointerup', end);
+  strip.addEventListener('pointercancel', end);
+  return h('div', { class: 'slider-row' }, h('span', null, 'Vorschau: im Feld ziehen'), strip);
+}
+
 export class SettingsScreen extends BaseScreen {
   private readonly body = panel({ className: 'col settings-body' });
 
@@ -33,7 +66,10 @@ export class SettingsScreen extends BaseScreen {
     );
   }
 
+  private sens = 1.4;
+
   refresh(s: Readonly<Settings>): void {
+    this.sens = s.sensitivity;
     clear(this.body);
     this.body.append(
       toggle('Soundeffekte', s.sound, (v) => this.cb.change({ sound: v })),
@@ -46,8 +82,13 @@ export class SettingsScreen extends BaseScreen {
         max: 3,
         step: 0.1,
         value: s.sensitivity,
-        onChange: (v) => this.cb.change({ sensitivity: v }),
+        onChange: (v) => {
+          this.sens = v;
+          this.cb.change({ sensitivity: v });
+        },
       }),
+      segmented('Steuerung', CONTROL_OPTIONS, s.controlMode, (v) => this.cb.change({ controlMode: v })),
+      sensitivityPreview(() => this.sens),
       segmented('Grafikqualität', QUALITY_OPTIONS, s.quality, (v) => this.cb.change({ quality: v })),
       button('Tipps zurücksetzen', () => this.cb.resetTips(), 'ghost'),
       button(

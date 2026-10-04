@@ -392,6 +392,7 @@ export class App {
     const st = this.save.data.settings;
     document.documentElement.classList.toggle('reduced-motion', st.reducedMotion);
     this.input.sensitivity = st.sensitivity;
+    this.input.mode = st.controlMode;
     this.audio.setSoundEnabled(st.sound);
     this.audio.setMusicEnabled(st.music);
     this.session?.view.setReducedMotion(st.reducedMotion);
@@ -501,7 +502,8 @@ export class App {
       const state = this.machine.state;
       if (state === 'playing') {
         const dx = this.input.consumeDeltaX() + this.input.getKeyAxis() * 10 * frameDt;
-        s.update(frameDt, dx);
+        s.view.setIndicatorActive(this.input.isPointerDown());
+        s.update(frameDt, dx, this.input.getAbsoluteTargetX());
         this.sfx.update(s.world, frameDt);
         this.feedback.update(s.world, frameDt);
         this.hud.update(s.world, this.save.data.coins);

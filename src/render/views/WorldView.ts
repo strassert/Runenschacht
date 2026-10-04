@@ -7,6 +7,7 @@ import { Particles } from '../fx/Particles';
 import { FloatingText } from '../fx/FloatingText';
 import { WEAPONS } from '../../core/config';
 import { gateLabel } from './GateView';
+import { TargetIndicatorView } from './TargetIndicatorView';
 import { BlockView } from './BlockView';
 import { BossView } from './BossView';
 import { BulletView } from './BulletView';
@@ -41,6 +42,8 @@ export class WorldView {
   private readonly particles = new Particles();
   private readonly profile;
   private readonly texts = new FloatingText();
+  private readonly indicator = new TargetIndicatorView();
+  private indicatorActive = false;
   private comboSlot = -1;
   private comboTotal = 0;
   private comboTime = -10;
@@ -78,11 +81,17 @@ export class WorldView {
       this.countLabel.root,
       this.particles.root,
       this.texts.root,
+      this.indicator.root,
     );
   }
 
   attachCamera(camera: THREE.Camera): void {
     this.camera = camera;
+  }
+
+  /** Zeigt den Ziel-Pfeil, solange gesteuert wird. */
+  setIndicatorActive(on: boolean): void {
+    this.indicatorActive = on;
   }
 
   setReducedMotion(on: boolean): void {
@@ -183,6 +192,7 @@ export class WorldView {
     this.countLabel.sync(world, frameDt);
     if (this.camera) this.particles.update(frameDt, this.camera);
     this.texts.update(frameDt);
+    this.indicator.sync(world, this.indicatorActive, frameDt);
   }
 
   dispose(): void {
@@ -199,5 +209,6 @@ export class WorldView {
     this.countLabel.dispose();
     this.particles.dispose();
     this.texts.dispose();
+    this.indicator.dispose();
   }
 }

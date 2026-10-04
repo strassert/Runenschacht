@@ -115,7 +115,7 @@ Gesamt: **86 Schritte**.
 - [x] 10.4 – HUD-Redesign
 - [x] 10.5 – Onboarding und kontextuelle Hinweise
 - [x] 10.6 – Spielgefühl und Rückmeldung („Juice“)
-- [ ] 10.7 – Steuerungs-Feinschliff
+- [x] 10.7 – Steuerungs-Feinschliff
 - [ ] 10.8 – Übergänge, Ladebildschirm, Fortsetzen-Countdown
 - [ ] 10.9 – Ergebnisbildschirm verbessern
 - [ ] 10.10 – Menü, Levelkarte und Shop verbessern
