@@ -7,6 +7,9 @@ import { Lighting } from '../render/Lighting';
 import type { Quality } from '../render/quality';
 import { Renderer } from '../render/Renderer';
 import { applyFog, createSky } from '../render/Sky';
+import { AudioEngine } from '../audio/AudioEngine';
+import { SfxDirector } from '../audio/SfxDirector';
+import { setButtonClickHook } from '../ui/components/Button';
 import { HudScreen } from '../ui/screens/HudScreen';
 import { LevelSelectScreen } from '../ui/screens/LevelSelectScreen';
 import { LoadingScreen } from '../ui/screens/LoadingScreen';
@@ -24,6 +27,7 @@ import { Session } from './Session';
 export class App {
   readonly machine = new GameStateMachine();
   readonly save = new SaveManager();
+  readonly audio = new AudioEngine();
   fps = 0;
 
   private readonly renderer: Renderer;
@@ -42,6 +46,7 @@ export class App {
   private readonly settings: SettingsScreen;
   private readonly loading = new LoadingScreen();
 
+  private readonly sfx = new SfxDirector(this.audio);
   private session: Session | null = null;
   private currentLevelId = 1;
   private autoplay = false;
@@ -74,6 +79,10 @@ export class App {
     this.renderer.scene.add(this.sky);
     applyFog(this.renderer.scene);
 
+    const unlock = (): void => this.audio.unlock();
+    window.addEventListener('pointerdown', unlock);
+    window.addEventListener('keydown', unlock);
+    setButtonClickHook(() => this.audio.play('uiClick'));
     this.input = new InputController(root);
     this.input.onPauseRequest = () => this.togglePause();
     document.addEventListener('visibilitychange', () => {
@@ -212,7 +221,10 @@ export class App {
       shadows: true,
     });
     session.timeScale = this.timeScale;
-    session.addListener((e) => this.hud.onEvent(e));
+    session.addListener((e, w) => {
+      this.hud.onEvent(e);
+      this.sfx.onEvent(e, w);
+    });
     this.session = session;
     this.renderer.scene.add(session.view.root);
     this.rig.update(session.world, 0, true);
@@ -275,7 +287,10 @@ export class App {
   }
 
   private applySettings(): void {
-    this.input.sensitivity = this.save.data.settings.sensitivity;
+    const st = this.save.data.settings;
+    this.input.sensitivity = st.sensitivity;
+    this.audio.setSoundEnabled(st.sound);
+    this.audio.setMusicEnabled(st.music);
   }
 
   private onFinished(): void {
@@ -303,6 +318,7 @@ export class App {
       if (state === 'playing') {
         const dx = this.input.consumeDeltaX() + this.input.getKeyAxis() * 10 * frameDt;
         s.update(frameDt, dx);
+        this.sfx.update(s.world, frameDt);
         this.hud.update(s.world, this.save.data.coins);
         if (s.sim.isFinished()) this.onFinished();
       } else {
