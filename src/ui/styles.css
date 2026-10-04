@@ -443,3 +443,158 @@ body {
   color: #ffd84d;
   letter-spacing: 1px;
 }
+
+.btn--danger {
+  background: var(--c-danger);
+  box-shadow: 0 6px 0 #9b1c1f;
+}
+
+/* ---------- Ergebnis ---------- */
+.result-panel {
+  align-items: stretch;
+  min-width: min(86vw, 340px);
+}
+
+.heading--gold {
+  color: var(--c-gold);
+  font-size: 48px;
+}
+
+.heading--red {
+  color: var(--c-danger);
+  font-size: 40px;
+}
+
+.result-stars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  font-size: 54px;
+  line-height: 1;
+}
+
+.star {
+  color: rgba(255, 255, 255, 0.2);
+}
+
+.star--on {
+  color: #ffd84d;
+  text-shadow: 0 3px 0 #b38600;
+}
+
+.result-badge {
+  align-self: center;
+  font-family: var(--font-display);
+  background: var(--c-success);
+  border-radius: 999px;
+  padding: 4px 14px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 17px;
+}
+
+/* ---------- Shop ---------- */
+.shop-list {
+  width: min(92vw, 420px);
+}
+
+.shop-coins {
+  font-family: var(--font-display);
+  font-size: 24px;
+}
+
+.shop-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: none;
+}
+
+.shop-card__head {
+  display: flex;
+  justify-content: space-between;
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+
+.shop-card__desc,
+.shop-card__missing {
+  color: var(--c-muted);
+  font-size: 14px;
+}
+
+.shop-card__effect {
+  font-size: 16px;
+}
+
+.segs {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+}
+
+.seg {
+  height: 10px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.seg--on {
+  background: var(--c-gold);
+}
+
+/* ---------- Einstellungen ---------- */
+.settings-body {
+  width: min(92vw, 420px);
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 18px;
+  min-height: 44px;
+}
+
+.setting-row--col {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.setting-row input[type='checkbox'] {
+  width: 28px;
+  height: 28px;
+  accent-color: var(--c-gold);
+}
+
+.setting-row input[type='range'] {
+  width: 100%;
+  accent-color: var(--c-gold);
+}
+
+.segmented {
+  display: flex;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.segmented__btn {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: 16px;
+  color: #fff;
+  background: transparent;
+  border: 0;
+  padding: 10px 4px;
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.segmented__btn--on {
+  background: var(--c-primary);
+}
