@@ -10,7 +10,7 @@ Gesamt: **86 Schritte**.
 - [x] 0.1 – Vite/TypeScript-Grundgerüst
 - [x] 0.2 – Tests, Lint, Format, `check`-Skript
 - [x] 0.3 – Ordnerstruktur, README, Editor-Settings
-- [ ] 0.4 – GitHub Actions CI
+- [x] 0.4 – GitHub Actions CI
 
 ## Phase 1 – Core-Grundlagen  ([phase-1-core.md](phase-1-core.md))
 
