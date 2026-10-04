@@ -5,6 +5,7 @@ import { Lighting } from '../render/Lighting';
 import { Renderer } from '../render/Renderer';
 import { applyFog, createSky } from '../render/Sky';
 import { GameLoop } from './GameLoop';
+import { GameStateMachine } from './GameStateMachine';
 import { Session } from './Session';
 
 export class App {
@@ -15,6 +16,9 @@ export class App {
   private readonly input: InputController;
   private readonly loop: GameLoop;
   private session: Session | null = null;
+  readonly machine = new GameStateMachine();
+  private finishedTimer = 0;
+  private autoplay = false;
 
   constructor(root: HTMLElement) {
     const canvas = root.querySelector<HTMLCanvasElement>('#game-canvas');
@@ -28,12 +32,17 @@ export class App {
     this.renderer.scene.add(this.sky);
     applyFog(this.renderer.scene);
     this.input = new InputController(root);
+    this.input.onPauseRequest = () => this.togglePause();
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && this.machine.state === 'playing') this.pause();
+    });
     this.loop = new GameLoop((dt) => this.frame(dt));
     this.loop.start();
   }
 
   /** Startet ein Level; der Trupp wartet, bis die erste Eingabe erfolgt. */
   startLevel(levelId: number, autoplay = false): void {
+    this.autoplay = autoplay;
     const level = getLevel(levelId);
     if (!level) throw new Error(`Unbekanntes Level ${levelId}`);
     if (this.session) {
@@ -48,6 +57,8 @@ export class App {
       shadows: true,
     });
     this.session = session;
+    this.finishedTimer = 0;
+    if (this.machine.state !== 'playing') this.machine.go('playing');
     this.renderer.scene.add(session.view.root);
     this.rig.update(session.world, 0, true);
     this.input.reset();
@@ -56,11 +67,41 @@ export class App {
     else this.input.onFirstInput = () => session.sim.start();
   }
 
+  pause(): void {
+    if (this.machine.state === 'playing') {
+      this.machine.go('paused');
+      this.input.enabled = false;
+    }
+  }
+
+  resume(): void {
+    if (this.machine.state === 'paused') {
+      this.machine.go('playing');
+      this.input.reset();
+      this.input.enabled = true;
+    }
+  }
+
+  togglePause(): void {
+    if (this.machine.state === 'playing') this.pause();
+    else if (this.machine.state === 'paused') this.resume();
+  }
+
   private frame(frameDt: number): void {
     const s = this.session;
     if (s) {
-      const dx = this.input.consumeDeltaX() + this.input.getKeyAxis() * 10 * frameDt;
-      s.update(frameDt, dx);
+      if (this.machine.state === 'playing') {
+        const dx = this.input.consumeDeltaX() + this.input.getKeyAxis() * 10 * frameDt;
+        s.update(frameDt, dx);
+        if (s.sim.isFinished()) {
+          this.machine.go('result');
+          this.input.enabled = false;
+        }
+      } else if (this.machine.state === 'result') {
+        // Platzhalter bis Phase 6: nach dem Ergebnis nach 2 s dasselbe Level neu starten.
+        this.finishedTimer += frameDt;
+        if (this.finishedTimer >= 2) this.startLevel(s.level.id, this.autoplay);
+      }
       this.rig.update(s.world, frameDt);
       this.lighting.update(s.world);
     }

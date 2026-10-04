@@ -68,7 +68,7 @@ Gesamt: **86 Schritte**.
 
 - [x] 5.1 – InputController
 - [x] 5.2 – GameLoop, Session und App (ersetzt Vorschau)
-- [ ] 5.3 – Zustandsmaschine
+- [x] 5.3 – Zustandsmaschine
 - [ ] 5.4 – Debug-Werkzeuge (Meilenstein M3)
 
 ## Phase 6 – Funktionale UI  ([phase-6-ui.md](phase-6-ui.md))
