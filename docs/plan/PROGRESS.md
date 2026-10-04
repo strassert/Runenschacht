@@ -53,7 +53,7 @@ Gesamt: **86 Schritte**.
 - [x] 4.3 – Licht, Himmel, Nebel
 - [x] 4.4 – Prozedurale Texturen (Canvas)
 - [x] 4.5 – Brücke (TrackView)
-- [ ] 4.6 – Soldatenmodell und SquadView
+- [x] 4.6 – Soldatenmodell und SquadView
 - [ ] 4.7 – Gegnerhorde (EnemyView)
 - [ ] 4.8 – Zahlen-Labels
 - [ ] 4.9 – Bonus-Blöcke (BlockView)

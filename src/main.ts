@@ -1,10 +1,9 @@
-import * as THREE from 'three';
 import { Renderer } from './render/Renderer';
-import { simToThree } from './render/coords';
 import { CameraRig } from './render/CameraRig';
 import { Lighting } from './render/Lighting';
 import { applyFog, createSky } from './render/Sky';
 import { TrackView } from './render/views/TrackView';
+import { SquadView } from './render/views/SquadView';
 import { Simulation } from './core/simulation';
 import { Bot } from './core/bot';
 import { getLevel } from './core/level/levels';
@@ -30,12 +29,8 @@ applyFog(r.scene);
 
 const level = getLevel(1)!;
 r.scene.add(new TrackView(level).root);
-const marker = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 1, 1),
-  new THREE.MeshBasicMaterial({ color: 0x2f6bff }),
-);
-marker.castShadow = true;
-r.scene.add(marker);
+const squadView = new SquadView(true);
+r.scene.add(squadView.root);
 
 const sim = new Simulation(level);
 const bot = new Bot();
@@ -54,8 +49,7 @@ function frame(now: number): void {
     sim.clearEvents();
     acc -= CONFIG.sim.dt;
   }
-  const s = sim.world.squad;
-  simToThree(s.x, 0.5, s.z, marker.position);
+  squadView.sync(sim.world, dt);
   rig.update(sim.world, dt);
   lighting.update(sim.world);
   sky.position.copy(r.camera.position);
