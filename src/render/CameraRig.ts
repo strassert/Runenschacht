@@ -22,7 +22,7 @@ export class CameraRig {
   setAspect(aspect: number): void {
     const vfov = (VFOV * Math.PI) / 180;
     const hfov = 2 * Math.atan(Math.tan(vfov / 2) * aspect);
-    this.baseDistance = clamp(7.2 / Math.tan(hfov / 2), 14, 30);
+    this.baseDistance = clamp(7.8 / Math.tan(hfov / 2), 14, 30);
   }
 
   /** Folgt dem Trupp; snap=true springt ohne Dämpfung. */

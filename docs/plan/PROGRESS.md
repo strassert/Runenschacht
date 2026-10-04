@@ -56,7 +56,7 @@ Gesamt: **86 Schritte**.
 - [x] 4.6 – Soldatenmodell und SquadView
 - [x] 4.7 – Gegnerhorde (EnemyView)
 - [x] 4.8 – Zahlen-Labels
-- [ ] 4.9 – Bonus-Blöcke (BlockView)
+- [x] 4.9 – Bonus-Blöcke (BlockView)
 - [ ] 4.10 – Tore (GateView)
 - [ ] 4.11 – Upgrade-Karten (CardView)
 - [ ] 4.12 – Projektile (BulletView)

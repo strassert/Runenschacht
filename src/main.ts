@@ -5,6 +5,8 @@ import { Lighting } from './render/Lighting';
 import { applyFog, createSky } from './render/Sky';
 import { TrackView } from './render/views/TrackView';
 import { SquadView } from './render/views/SquadView';
+import { BlockView } from './render/views/BlockView';
+import { EnemyView } from './render/views/EnemyView';
 import { Simulation } from './core/simulation';
 import { Bot } from './core/bot';
 import { getLevel } from './core/level/levels';
@@ -36,6 +38,9 @@ r.scene.add(squadView.root);
 const sim = new Simulation(level);
 const bot = new Bot();
 sim.start();
+const blockView = new BlockView(sim.world);
+const enemyView = new EnemyView(level);
+r.scene.add(blockView.root, enemyView.root);
 sim.world.squad.z = startZ;
 let acc = 0;
 let last = performance.now();
@@ -51,6 +56,8 @@ function frame(now: number): void {
     acc -= CONFIG.sim.dt;
   }
   squadView.sync(sim.world, dt);
+  blockView.sync(sim.world);
+  enemyView.sync(sim.world);
   rig.update(sim.world, dt);
   lighting.update(sim.world);
   sky.position.copy(r.camera.position);
