@@ -11,6 +11,7 @@ export interface SettingsCallbacks {
   change: (patch: Partial<Settings>) => void;
   back: () => void;
   resetProgress: () => void;
+  resetTips: () => void;
 }
 
 const QUALITY_OPTIONS: readonly (readonly [QualitySetting, string])[] = [
@@ -48,6 +49,7 @@ export class SettingsScreen extends BaseScreen {
         onChange: (v) => this.cb.change({ sensitivity: v }),
       }),
       segmented('Grafikqualität', QUALITY_OPTIONS, s.quality, (v) => this.cb.change({ quality: v })),
+      button('Tipps zurücksetzen', () => this.cb.resetTips(), 'ghost'),
       button(
         'Fortschritt zurücksetzen',
         () => {

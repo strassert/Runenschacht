@@ -113,7 +113,7 @@ Gesamt: **86 Schritte**.
 - [x] 10.2 – Design-Tokens, Icons und Komponenten
 - [x] 10.3 – Layout-Rahmen, Safe Areas, Desktop-Darstellung
 - [x] 10.4 – HUD-Redesign
-- [ ] 10.5 – Onboarding und kontextuelle Hinweise
+- [x] 10.5 – Onboarding und kontextuelle Hinweise
 - [ ] 10.6 – Spielgefühl und Rückmeldung („Juice“)
 - [ ] 10.7 – Steuerungs-Feinschliff
 - [ ] 10.8 – Übergänge, Ladebildschirm, Fortsetzen-Countdown

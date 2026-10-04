@@ -13,6 +13,9 @@ import { AudioEngine } from '../audio/AudioEngine';
 import { MusicPlayer } from '../audio/music';
 import { SfxDirector } from '../audio/SfxDirector';
 import { setButtonClickHook } from '../ui/components/Button';
+import { TutorialDirector } from './TutorialDirector';
+import { TutorialOverlay } from '../ui/screens/TutorialOverlay';
+import * as THREE from 'three';
 import { FeedbackDirector } from './FeedbackDirector';
 import { h } from '../ui/dom';
 import { HudScreen } from '../ui/screens/HudScreen';
@@ -50,6 +53,12 @@ export class App {
   private readonly shop: ShopScreen;
   private readonly settings: SettingsScreen;
   private readonly loading = new LoadingScreen();
+  private readonly tutorialOverlay = new TutorialOverlay();
+  private tutorial: TutorialDirector | null = null;
+  private tipTimer = 0;
+  private slowActive = false;
+  private slowElapsed = 0;
+  private tipIsDrag = false;
 
   private readonly sfx = new SfxDirector(this.audio);
   private readonly music = new MusicPlayer(this.audio);
@@ -149,6 +158,7 @@ export class App {
     this.settings = new SettingsScreen({
       change: (patch) => this.changeSettings(patch),
       back: () => this.leaveSettings(),
+      resetTips: () => this.save.update((d) => (d.tutorialSeen = {})),
       resetProgress: () => {
         this.save.reset();
         this.applySettings();
@@ -164,6 +174,7 @@ export class App {
     this.ui.register('result', this.result);
     this.ui.register('shop', this.shop);
     this.ui.register('settings', this.settings);
+    this.ui.register('tutorial', this.tutorialOverlay);
 
     if (params?.debug) this.fpsMeter = new FpsMeter(root);
     this.setupQuality();
@@ -230,6 +241,7 @@ export class App {
     if (this.machine.state !== 'playing') return;
     this.machine.go('paused');
     this.input.enabled = false;
+    this.ui.hide('tutorial');
     this.ui.showOverlay('pause');
   }
 
@@ -288,6 +300,9 @@ export class App {
     }
     this.currentLevelId = levelId;
     this.feedback.reset();
+    this.tutorial = new TutorialDirector(this.save.data.tutorialSeen);
+    this.tipTimer = 0;
+    this.slowActive = false;
     const session = new Session({
       level,
       modifiers: modifiersFromUpgrades(this.save.data.upgrades),
@@ -300,6 +315,7 @@ export class App {
       this.hud.onEvent(e);
       this.sfx.onEvent(e, w);
       this.feedback.onEvent(e, w);
+      this.tutorial?.onEvent(e);
     });
     this.session = session;
     session.view.attachCamera(this.renderer.camera);
@@ -375,6 +391,51 @@ export class App {
     this.session?.view.setReducedMotion(st.reducedMotion);
   }
 
+  /** Hinweise prüfen, anzeigen und Zeitlupe steuern. */
+  private updateTutorial(s: Session, frameDt: number): void {
+    const reduced = this.save.data.settings.reducedMotion;
+    if (this.tutorial && this.tipTimer <= 0) {
+      const tip = this.tutorial.check(s.world);
+      if (tip) {
+        this.save.update((d) => {
+          d.tutorialSeen[tip.id] = true;
+        });
+        let pct: number | null = null;
+        if (tip.target) {
+          const v = new THREE.Vector3(tip.target.x, 1, -tip.target.z).project(this.renderer.camera);
+          pct = (v.x * 0.5 + 0.5) * 100;
+        }
+        this.tipIsDrag = tip.id === 'drag';
+        this.tipTimer = reduced ? 3 : 3.5;
+        this.tutorialOverlay.showTip(tip.id, pct);
+        this.ui.showOverlay('tutorial');
+        if (!this.tipIsDrag && !reduced) {
+          this.slowActive = true;
+          this.slowElapsed = 0;
+        }
+      }
+    }
+    if (this.tipTimer > 0) {
+      this.tipTimer -= frameDt;
+      const dragStarted = this.tipIsDrag && s.world.phase !== 'ready';
+      if (this.tipTimer <= 0 || dragStarted) {
+        this.tipTimer = 0;
+        this.ui.hide('tutorial');
+      }
+    }
+    // Zeitlupe: 1,4 s langsam, danach in 0,3 s zurück auf Normalgeschwindigkeit
+    if (this.slowActive) {
+      this.slowElapsed += frameDt;
+      const t = this.slowElapsed;
+      const factor = t < 1.4 ? 0.35 : 0.35 + 0.65 * Math.min(1, (t - 1.4) / 0.3);
+      s.timeScale = this.timeScale * factor;
+      if (t >= 1.7) {
+        this.slowActive = false;
+        s.timeScale = this.timeScale;
+      }
+    }
+  }
+
   private onFinished(): void {
     const s = this.session;
     if (!s) return;
@@ -416,6 +477,7 @@ export class App {
         this.sfx.update(s.world, frameDt);
         this.feedback.update(s.world, frameDt);
         this.hud.update(s.world, this.save.data.coins);
+        this.updateTutorial(s, frameDt);
         const next = this.governor?.sample(frameDt * 1000);
         if (next) this.applyQuality(next);
         if (s.sim.isFinished()) this.onFinished();

@@ -1,7 +1,7 @@
 import { h } from './dom';
 
 export type ScreenName =
-  'loading' | 'menu' | 'levelSelect' | 'hud' | 'pause' | 'result' | 'shop' | 'settings';
+  'loading' | 'menu' | 'levelSelect' | 'hud' | 'pause' | 'result' | 'shop' | 'settings' | 'tutorial';
 
 export interface Screen {
   readonly el: HTMLElement;
