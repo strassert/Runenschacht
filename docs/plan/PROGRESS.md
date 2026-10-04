@@ -74,7 +74,7 @@ Gesamt: **86 Schritte**.
 ## Phase 6 – Funktionale UI  ([phase-6-ui.md](phase-6-ui.md))
 
 - [x] 6.1 – Styles, DOM-Helfer, UIManager, Schrift
-- [ ] 6.2 – Speicherstand (SaveManager)
+- [x] 6.2 – Speicherstand (SaveManager)
 - [ ] 6.3 – HUD
 - [ ] 6.4 – Hauptmenü und Levelauswahl
 - [ ] 6.5 – Pause
