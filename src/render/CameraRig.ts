@@ -13,6 +13,9 @@ export class CameraRig {
   /** 0..1, wird pro Frame abgebaut; erhöht das Sichtfeld kurz (Tor-Puls). */
   fovPulse = 0;
   private appliedFov = VFOV;
+  /** Menü: Kamera schwenkt langsam um den wartenden Trupp. */
+  menuMode = false;
+  private clock = 0;
   private intro = 1;
   private static readonly INTRO_TIME = 1.2;
 
@@ -62,12 +65,24 @@ export class CameraRig {
     }
 
     // Blickrichtung (Sim: von hinten oben nach vorne): Kamera liegt hinter und über dem Fokus.
+    this.clock += frameDt;
     this.focus.set(this.fx, 0, -targetFz);
-    this.camera.position.set(
-      this.focus.x,
-      Math.sin(TILT) * this.distance,
-      this.focus.z + Math.cos(TILT) * this.distance,
-    );
+    if (this.menuMode) {
+      const a = Math.sin(this.clock * 0.25) * 0.7;
+      const d = this.distance * 0.8;
+      this.focus.set(this.fx, 0.5, -(s.z + 3));
+      this.camera.position.set(
+        this.focus.x + Math.sin(a) * d * Math.cos(TILT),
+        Math.sin(TILT * 0.8) * d,
+        this.focus.z + Math.cos(a) * d * Math.cos(TILT),
+      );
+    } else {
+      this.camera.position.set(
+        this.focus.x,
+        Math.sin(TILT) * this.distance,
+        this.focus.z + Math.cos(TILT) * this.distance,
+      );
+    }
     this.fovPulse = Math.max(0, this.fovPulse - frameDt * 5);
     const fov = VFOV + 3 * this.fovPulse;
     if (Math.abs(fov - this.appliedFov) > 0.01) {

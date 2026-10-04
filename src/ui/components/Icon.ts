@@ -23,7 +23,8 @@ export type IconName =
   | 'check'
   | 'chevronLeft'
   | 'infinity'
-  | 'hand';
+  | 'hand'
+  | 'map';
 
 interface IconDef {
   /** SVG-Pfade (24×24-Raster) */
@@ -37,6 +38,7 @@ const SPEAKER = 'M4 9v6h4l5 4V5L8 9H4z';
 const NOTE = 'M9 18V6l10-2v12 M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0z M19 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z';
 
 const ICONS: Record<IconName, IconDef> = {
+  map: { paths: ['M3 6l6-2 6 2 6-2v14l-6 2-6-2-6 2z', 'M9 4v14', 'M15 6v14'] },
   pause: { paths: ['M8 5v14', 'M16 5v14'] },
   play: { paths: ['M7 4l13 8-13 8z'], fill: true },
   retry: { paths: ['M20 12a8 8 0 1 1-2.4-5.7', 'M20 4v5h-5'] },

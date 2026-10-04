@@ -161,6 +161,7 @@ export class App {
     });
     this.shop = new ShopScreen({
       buy: (id) => this.save.buyUpgrade(id),
+      sound: () => this.audio.play('coin'),
       back: () => this.leaveShop(),
     });
     this.settings = new SettingsScreen({
@@ -173,6 +174,7 @@ export class App {
         this.settings.refresh(this.save.data.settings);
       },
     });
+    this.shop.onBought = (id) => this.shop.refresh(this.save.data, id);
     this.hud.onPause = () => this.pause();
     this.ui.register('loading', this.loading);
     this.ui.register('menu', this.menu);
@@ -230,6 +232,7 @@ export class App {
     this.input.reset();
     this.input.enabled = true;
     this.countdown = 0;
+    this.rig.menuMode = false;
     if (this.save.data.settings.reducedMotion) this.rig.skipIntro();
     else this.rig.startIntro();
     if (this.autoplay) session.sim.start();
@@ -371,6 +374,7 @@ export class App {
     const next = this.nextLevelId();
     if (!reuseSession || !this.session) this.createSession(next);
     this.rig.skipIntro();
+    this.rig.menuMode = true;
     this.goTo('menu');
     const lvl = getLevel(next);
     this.menu.setNextLevel(`Level ${next}${lvl ? ` · ${lvl.name}` : ''}`);
