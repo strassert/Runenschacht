@@ -109,6 +109,13 @@ export class App {
     const vignette = h('div', { class: 'hit-vignette' });
     uiRoot.appendChild(vignette);
     this.feedback = new FeedbackDirector(vignette, () => this.save.data.settings);
+    // Handy im Querformat: Spiel pausieren, solange der Drehen-Hinweis sichtbar ist
+    const landscape = window.matchMedia?.(
+      '(orientation: landscape) and (pointer: coarse) and (max-height: 500px)',
+    );
+    landscape?.addEventListener('change', (e) => {
+      if (e.matches && this.machine.state === 'playing') this.pause();
+    });
     this.ui = new UIManager(uiRoot);
     this.menu = new MenuScreen({
       play: () => this.startLevel(this.nextLevelId()),

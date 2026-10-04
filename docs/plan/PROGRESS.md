@@ -111,7 +111,7 @@ Gesamt: **86 Schritte**.
 
 - [x] 10.1 – UX-Audit und Baseline-Screenshots
 - [x] 10.2 – Design-Tokens, Icons und Komponenten
-- [ ] 10.3 – Layout-Rahmen, Safe Areas, Desktop-Darstellung
+- [x] 10.3 – Layout-Rahmen, Safe Areas, Desktop-Darstellung
 - [ ] 10.4 – HUD-Redesign
 - [ ] 10.5 – Onboarding und kontextuelle Hinweise
 - [ ] 10.6 – Spielgefühl und Rückmeldung („Juice“)

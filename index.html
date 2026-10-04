@@ -19,6 +19,23 @@
       <canvas id="game-canvas"></canvas>
       <div id="ui-root"></div>
     </div>
+    <div id="rotate-hint" role="alert" aria-live="polite">
+      <svg
+        viewBox="0 0 24 24"
+        width="64"
+        height="64"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <rect x="7" y="2" width="10" height="20" rx="2"></rect>
+        <path d="M11 18h2"></path>
+      </svg>
+      <p>Bitte Gerät drehen</p>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
