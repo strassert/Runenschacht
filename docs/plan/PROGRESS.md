@@ -54,7 +54,7 @@ Gesamt: **86 Schritte**.
 - [x] 4.4 – Prozedurale Texturen (Canvas)
 - [x] 4.5 – Brücke (TrackView)
 - [x] 4.6 – Soldatenmodell und SquadView
-- [ ] 4.7 – Gegnerhorde (EnemyView)
+- [x] 4.7 – Gegnerhorde (EnemyView)
 - [ ] 4.8 – Zahlen-Labels
 - [ ] 4.9 – Bonus-Blöcke (BlockView)
 - [ ] 4.10 – Tore (GateView)
