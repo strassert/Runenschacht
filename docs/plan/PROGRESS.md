@@ -17,7 +17,7 @@ Gesamt: **86 Schritte**.
 - [x] 1.1 – Zentrale Konfiguration
 - [x] 1.2 – Mathe-Helfer
 - [ ] 1.3 – Deterministischer Zufallsgenerator
-- [ ] 1.4 – Level-Typen und Simulations-Ereignisse
+- [x] 1.4 – Level-Typen und Simulations-Ereignisse
 - [ ] 1.5 – Objekt-Pools für Projektile und Gegner
 - [ ] 1.6 – Welt-Typen vervollständigen
 - [ ] 1.7 – Formation (Phyllotaxis-Spirale)
