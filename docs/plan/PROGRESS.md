@@ -57,7 +57,7 @@ Gesamt: **86 Schritte**.
 - [x] 4.7 – Gegnerhorde (EnemyView)
 - [x] 4.8 – Zahlen-Labels
 - [x] 4.9 – Bonus-Blöcke (BlockView)
-- [ ] 4.10 – Tore (GateView)
+- [x] 4.10 – Tore (GateView)
 - [ ] 4.11 – Upgrade-Karten (CardView)
 - [ ] 4.12 – Projektile (BulletView)
 - [ ] 4.13 – Held und Boss
