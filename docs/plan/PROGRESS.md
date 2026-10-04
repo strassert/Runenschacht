@@ -21,8 +21,8 @@ Gesamt: **86 Schritte**.
 - [x] 1.5 – Objekt-Pools für Projektile und Gegner
 - [x] 1.6 – Welt-Typen vervollständigen
 - [x] 1.7 – Formation (Phyllotaxis-Spirale)
-- [ ] 1.8 – Räumliche Z-Buckets (Broadphase)
-- [ ] 1.9 – Shop-Formeln und Laufzeit-Modifikatoren
+- [x] 1.8 – Räumliche Z-Buckets (Broadphase)
+- [x] 1.9 – Shop-Formeln und Laufzeit-Modifikatoren
 
 ## Phase 2 – Level-Daten  ([phase-2-levels.md](phase-2-levels.md))
 
