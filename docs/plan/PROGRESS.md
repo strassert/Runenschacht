@@ -88,7 +88,7 @@ Gesamt: **86 Schritte**.
 - [x] 7.1 – AudioEngine
 - [x] 7.2 – Synthetisierte Soundeffekte
 - [x] 7.3 – Musik
-- [ ] 7.4 – Partikel
+- [x] 7.4 – Partikel
 - [ ] 7.5 – Schwebende Zahlen
 - [ ] 7.6 – Screenshake, Treffer-Vignette, Vibration
 

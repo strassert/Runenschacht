@@ -228,6 +228,8 @@ export class App {
       this.sfx.onEvent(e, w);
     });
     this.session = session;
+    session.view.attachCamera(this.renderer.camera);
+    session.view.setReducedMotion(this.save.data.settings.reducedMotion);
     this.renderer.scene.add(session.view.root);
     this.rig.update(session.world, 0, true);
   }
