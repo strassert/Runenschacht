@@ -47,7 +47,7 @@
   --fs-md: 1.0625rem;
   --fs-lg: clamp(1.25rem, 5vw, 1.5rem);
   --fs-xl: clamp(1.75rem, 8vw, 2.5rem);
-  --fs-hero: clamp(2.75rem, 13vw, 5.25rem);
+  --fs-hero: clamp(2.5rem, 11vw, 5rem);
 
   /* Bewegung */
   --t-fast: 120ms;

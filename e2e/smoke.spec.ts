@@ -32,7 +32,10 @@ test('Level 1 per Autoplay gewinnen', async ({ page }) => {
 
 test('Steuerung bewegt den Trupp', async ({ page }) => {
   await page.goto('/?level=1&debug=1');
-  await page.waitForFunction(() => (window as unknown as { __game?: unknown }).__game !== undefined);
+  await page.waitForFunction(() => {
+    const g = (window as unknown as { __game?: { getState(): { state: string } | null } }).__game;
+    return g?.getState()?.state === 'playing';
+  });
   const box = await page.locator('canvas#game-canvas').boundingBox();
   if (!box) throw new Error('Canvas nicht gefunden');
   const cx = box.x + box.width / 2;

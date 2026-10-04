@@ -22,7 +22,10 @@ async function game<T>(page: Page, fn: (g: Game) => T): Promise<T> {
 void game;
 
 async function waitReady(page: Page): Promise<void> {
-  await page.waitForFunction(() => (window as unknown as { __game?: unknown }).__game !== undefined);
+  await page.waitForFunction(() => {
+    const g = (window as unknown as { __game?: { getState(): { state: string } | null } }).__game;
+    return g?.getState()?.state === 'playing';
+  });
 }
 
 test.describe('Screenshots', () => {
@@ -87,7 +90,7 @@ test.describe('Screenshots', () => {
       await page.getByRole('button', { name: 'Zurück', exact: true }).click();
 
       // 5) Einstellungen
-      await page.getByRole('button', { name: 'Einstellungen' }).click();
+      await page.getByRole('button', { name: 'Optionen' }).click();
       await page.waitForTimeout(800);
       await shot('05-settings');
       await page.getByRole('button', { name: 'Zurück', exact: true }).click();
