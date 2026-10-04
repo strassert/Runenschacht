@@ -95,7 +95,7 @@ Gesamt: **86 Schritte**.
 ## Phase 8 – Inhalte & Balancing (M4)  ([phase-8-content-balancing.md](phase-8-content-balancing.md))
 
 - [x] 8.1 – Level 6 bis 10
-- [ ] 8.2 – Balancing-Harness
+- [x] 8.2 – Balancing-Harness
 - [ ] 8.3 – Endlos-Generator
 - [ ] 8.4 – Endlosmodus im Spiel (Meilenstein M4)
 

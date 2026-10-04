@@ -13,7 +13,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run build"
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm run test && npm run build",
+    "balance": "BALANCE_REPORT=1 vitest run src/core/balance.test.ts"
   },
   "dependencies": {
     "@fontsource/lilita-one": "^5.3.0",
