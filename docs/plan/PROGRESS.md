@@ -66,7 +66,7 @@ Gesamt: **86 Schritte**.
 
 ## Phase 5 – Eingabe & Game-Loop (M3)  ([phase-5-input-loop.md](phase-5-input-loop.md))
 
-- [ ] 5.1 – InputController
+- [x] 5.1 – InputController
 - [ ] 5.2 – GameLoop, Session und App (ersetzt Vorschau)
 - [ ] 5.3 – Zustandsmaschine
 - [ ] 5.4 – Debug-Werkzeuge (Meilenstein M3)
