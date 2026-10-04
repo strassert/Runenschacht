@@ -96,8 +96,8 @@ Gesamt: **86 Schritte**.
 
 - [x] 8.1 – Level 6 bis 10
 - [x] 8.2 – Balancing-Harness
-- [ ] 8.3 – Endlos-Generator
-- [ ] 8.4 – Endlosmodus im Spiel (Meilenstein M4)
+- [x] 8.3 – Endlos-Generator
+- [x] 8.4 – Endlosmodus im Spiel (Meilenstein M4)
 
 ## Phase 9 – Qualität & Deployment (M5)  ([phase-9-quality-deploy.md](phase-9-quality-deploy.md))
 

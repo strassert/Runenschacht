@@ -31,6 +31,11 @@ describe('scoring', () => {
     expect(r.stars).toBe(0);
     expect(r.coins).toBe(9);
   });
+  it('caps the level bonus for endless rounds', () => {
+    const w = createWorld(makeTestLevel({ id: 1005 }));
+    w.phase = 'victory';
+    expect(computeResult(w).coins).toBe(8 + 50 + 10 * 20);
+  });
   it('applies the coin multiplier', () => {
     const w = createWorld(makeTestLevel(), {
       startSoldierBonus: 0,

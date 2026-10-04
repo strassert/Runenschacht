@@ -17,6 +17,8 @@ export interface ResultInfo {
   totalCoins: number;
   /** squad.z / arenaZ (0..1) */
   progress: number;
+  /** Nur im Endlosmodus gesetzt. */
+  endless?: { round: number; best: number } | null;
 }
 
 export class ResultScreen extends BaseScreen {
@@ -34,7 +36,7 @@ export class ResultScreen extends BaseScreen {
 
     if (r.victory) {
       this.panel.append(
-        h('h2', { class: 'heading heading--gold' }, 'SIEG!'),
+        h('h2', { class: 'heading heading--gold' }, info.endless ? `RUNDE ${info.endless.round}!` : 'SIEG!'),
         h(
           'div',
           { class: 'result-stars', 'aria-label': `${r.stars} von 3 Sternen` },
@@ -44,14 +46,18 @@ export class ResultScreen extends BaseScreen {
         row('Überlebende', String(r.survivors)),
         row('Besiegte Gegner', formatCount(r.enemiesKilled)),
         row('Münzen', `+${r.coins} 🪙`),
-        ...(info.hasNextLevel ? [button('Weiter', this.cb.next, 'gold')] : []),
+        ...(info.hasNextLevel
+          ? [button(info.endless ? 'Nächste Runde' : 'Weiter', this.cb.next, 'gold')]
+          : []),
         button('Nochmal', this.cb.retry, info.hasNextLevel ? 'ghost' : 'primary'),
         button('Menü', this.cb.menu, 'ghost'),
       );
     } else {
       this.panel.append(
         h('h2', { class: 'heading heading--red' }, 'NIEDERLAGE'),
-        row('Fortschritt', `${Math.round(info.progress * 100)} %`),
+        ...(info.endless
+          ? [row('Erreichte Runde', String(info.endless.round)), row('Rekord', String(info.endless.best))]
+          : [row('Fortschritt', `${Math.round(info.progress * 100)} %`)]),
         row('Besiegte Gegner', formatCount(r.enemiesKilled)),
         row('Münzen', `+${r.coins} 🪙`),
         button('Nochmal', this.cb.retry, 'primary'),

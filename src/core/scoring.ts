@@ -25,7 +25,8 @@ export function computeResult(world: WorldState): RunResult {
   let stars: 0 | 1 | 2 | 3 = 0;
   if (victory) {
     coins = Math.floor(
-      (survivors * eco.coinsPerSurvivor + eco.coinsBossBonus + eco.coinsPerLevel * levelId) * mult,
+      (survivors * eco.coinsPerSurvivor + eco.coinsBossBonus + eco.coinsPerLevel * Math.min(levelId, 20)) *
+        mult,
     );
     const ratio = peak > 0 ? survivors / peak : 0;
     stars = 1;

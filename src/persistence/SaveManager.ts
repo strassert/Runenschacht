@@ -185,6 +185,10 @@ export class SaveManager {
       d.stats.enemiesKilled += result.enemiesKilled;
       d.coins += result.coins;
       if (result.victory) d.stats.wins++;
+      if (result.levelId > 1000) {
+        const round = result.levelId - 1000;
+        d.stats.bestEndlessRound = Math.max(d.stats.bestEndlessRound, result.victory ? round : round - 1);
+      }
       if (result.victory && result.levelId <= LEVEL_COUNT) {
         const key = String(result.levelId);
         const prev = d.levelStars[key] ?? 0;

@@ -75,6 +75,15 @@ describe('SaveManager', () => {
     expect(m.data.stats.wins).toBe(0);
     expect(m.data.stats.runs).toBe(1);
   });
+  it('records the best endless round without touching level progress', () => {
+    const m = new SaveManager(fakeStorage());
+    m.applyResult(win({ levelId: 1003, victory: true }));
+    expect(m.data.stats.bestEndlessRound).toBe(3);
+    m.applyResult(win({ levelId: 1005, victory: false, stars: 0 }));
+    expect(m.data.stats.bestEndlessRound).toBe(4);
+    expect(m.data.highestUnlockedLevel).toBe(1);
+    expect(m.data.levelStars).toEqual({});
+  });
   it('buys upgrades only with enough coins and below max', () => {
     const m = new SaveManager(fakeStorage());
     expect(m.buyUpgrade('startSoldiers')).toBe(false);

@@ -1,3 +1,5 @@
+import { generateEndlessLevel } from '../core/level/generator';
+import type { LevelDef } from '../core/level/types';
 import { LEVEL_COUNT, getLevel } from '../core/level/levels';
 import { modifiersFromUpgrades } from '../core/upgrades';
 import { InputController } from '../input/InputController';
@@ -54,6 +56,7 @@ export class App {
   private feedback!: FeedbackDirector;
   private session: Session | null = null;
   private currentLevelId = 1;
+  private endlessSeed = 1;
   private autoplay = false;
   private seedOverride: number | null = null;
   private qualityOverride: Quality | null = null;
@@ -105,7 +108,7 @@ export class App {
       settings: () => this.openSettings(),
     });
     this.levelSelect = new LevelSelectScreen({
-      select: (id) => this.startLevel(id === 'endless' ? LEVEL_COUNT : id),
+      select: (id) => (id === 'endless' ? this.startEndless() : this.startLevel(id)),
       back: () => this.goMenu(),
     });
     this.pauseScreen = new PauseScreen({
@@ -115,7 +118,10 @@ export class App {
       menu: () => this.goMenu(),
     });
     this.result = new ResultScreen({
-      next: () => this.startLevel(Math.min(LEVEL_COUNT, this.currentLevelId + 1)),
+      next: () =>
+        this.startLevel(
+          this.isEndless() ? this.currentLevelId + 1 : Math.min(LEVEL_COUNT, this.currentLevelId + 1),
+        ),
       retry: () => this.startLevel(this.currentLevelId),
       menu: () => this.goMenu(),
       shop: () => this.openShop(),
@@ -166,13 +172,23 @@ export class App {
     this.createSession(levelId);
     const session = this.session!;
     this.ui.hideAll();
-    this.hud.setLabel(`Level ${levelId}`);
+    this.hud.setLabel(levelId > 1000 ? `Runde ${levelId - 1000}` : `Level ${levelId}`);
     this.ui.show('hud');
     if (this.machine.state !== 'playing') this.machine.go('playing');
     this.input.reset();
     this.input.enabled = true;
     if (this.autoplay) session.sim.start();
     else this.input.onFirstInput = () => session.sim.start();
+  }
+
+  /** Startet den Endlosmodus mit neuem Seed bei Runde 1. */
+  startEndless(): void {
+    this.endlessSeed = this.seedOverride ?? Date.now() % 100000;
+    this.startLevel(1001);
+  }
+
+  private isEndless(): boolean {
+    return this.currentLevelId > 1000;
   }
 
   getSession(): Session | null {
@@ -213,9 +229,14 @@ export class App {
   }
 
   private createSession(levelId: number): void {
-    const base = getLevel(levelId);
-    if (!base) throw new Error(`Unbekanntes Level ${levelId}`);
-    const level = this.seedOverride !== null ? { ...base, seed: this.seedOverride } : base;
+    let level: LevelDef;
+    if (levelId > 1000) {
+      level = generateEndlessLevel(levelId - 1000, this.endlessSeed);
+    } else {
+      const base = getLevel(levelId);
+      if (!base) throw new Error(`Unbekanntes Level ${levelId}`);
+      level = this.seedOverride !== null ? { ...base, seed: this.seedOverride } : base;
+    }
     if (this.session) {
       this.renderer.scene.remove(this.session.view.root);
       this.session.dispose();
@@ -315,10 +336,13 @@ export class App {
     this.goTo('result');
     this.lastResultInfo = { progress: s.world.squad.z / s.world.arenaZ };
     this.result.showResult(result, {
-      hasNextLevel: result.victory && this.currentLevelId < LEVEL_COUNT,
+      hasNextLevel: result.victory && (this.isEndless() || this.currentLevelId < LEVEL_COUNT),
       newBestStars,
       totalCoins: this.save.data.coins,
       progress: this.lastResultInfo.progress,
+      endless: this.isEndless()
+        ? { round: this.currentLevelId - 1000, best: this.save.data.stats.bestEndlessRound }
+        : null,
     });
     this.ui.show('hud');
     this.ui.showOverlay('result');
