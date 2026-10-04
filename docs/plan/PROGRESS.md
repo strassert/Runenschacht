@@ -27,7 +27,7 @@ Gesamt: **86 Schritte**.
 ## Phase 2 – Level-Daten  ([phase-2-levels.md](phase-2-levels.md))
 
 - [x] 2.1 – Level-Expansion
-- [ ] 2.2 – Level-Validierung
+- [x] 2.2 – Level-Validierung
 - [ ] 2.3 – Level 1 bis 5
 
 ## Phase 3 – Simulation (M1)  ([phase-3-simulation.md](phase-3-simulation.md))
