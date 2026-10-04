@@ -23,6 +23,9 @@ export interface Settings {
   controlMode: ControlMode;
   colorblind: boolean;
   largeText: boolean;
+  /** 0..1 */
+  sfxVolume: number;
+  musicVolume: number;
 }
 
 export interface SaveData {
@@ -73,6 +76,8 @@ export function defaultSave(): SaveData {
       controlMode: 'relative',
       colorblind: false,
       largeText: false,
+      sfxVolume: 1,
+      musicVolume: 1,
     },
     tutorialSeen: {},
     stats: { runs: 0, wins: 0, enemiesKilled: 0, bestEndlessRound: 0 },
@@ -124,6 +129,8 @@ export function sanitizeSave(raw: unknown): SaveData {
     d.settings.reducedMotion = bool(s.reducedMotion, d.settings.reducedMotion);
     d.settings.colorblind = bool(s.colorblind, d.settings.colorblind);
     d.settings.largeText = bool(s.largeText, d.settings.largeText);
+    d.settings.sfxVolume = num(s.sfxVolume, 0, 1, 1);
+    d.settings.musicVolume = num(s.musicVolume, 0, 1, 1);
     d.settings.sensitivity = num(s.sensitivity, 0.5, 3, d.settings.sensitivity);
     if (s.controlMode === 'relative' || s.controlMode === 'absolute') d.settings.controlMode = s.controlMode;
     if (s.quality === 'auto' || s.quality === 'low' || s.quality === 'medium' || s.quality === 'high') {

@@ -63,6 +63,8 @@ export class App {
   private tipTimer = 0;
   private bossSlowLeft = 0;
   private flashEl: HTMLElement | null = null;
+  private playTime = 0;
+  private audioHint: HTMLElement | null = null;
   private slowActive = false;
   private slowElapsed = 0;
   private tipIsDrag = false;
@@ -123,7 +125,9 @@ export class App {
 
     const vignette = h('div', { class: 'hit-vignette' });
     this.flashEl = h('div', { class: 'screen-flash' });
-    uiRoot.append(vignette, this.flashEl);
+    this.audioHint = h('div', { class: 'audio-hint hidden' }, 'Tippe für Ton');
+    uiRoot.append(vignette, this.flashEl, this.audioHint);
+    window.addEventListener('pointerdown', () => this.audioHint?.classList.add('hidden'));
     this.feedback = new FeedbackDirector(vignette, () => this.save.data.settings);
     // Handy im Querformat: Spiel pausieren, solange der Drehen-Hinweis sichtbar ist
     const landscape = window.matchMedia?.(
@@ -148,6 +152,12 @@ export class App {
       restart: () => this.startLevel(this.currentLevelId),
       settings: () => this.openSettings(),
       menu: () => this.goMenu(),
+      toggleMute: () => {
+        const on = !this.save.data.settings.sound;
+        this.changeSettings({ sound: on, music: on });
+        return on;
+      },
+      isSoundOn: () => this.save.data.settings.sound,
     });
     this.result = new ResultScreen({
       next: () =>
@@ -443,6 +453,8 @@ export class App {
     this.input.mode = st.controlMode;
     this.audio.setSoundEnabled(st.sound);
     this.audio.setMusicEnabled(st.music);
+    this.audio.setVolumes(st.sfxVolume, st.musicVolume);
+    this.pauseScreen?.setSoundOn(st.sound);
     this.session?.view.setReducedMotion(st.reducedMotion);
   }
 
@@ -566,6 +578,10 @@ export class App {
         s.view.sync(s.world, 0);
       } else if (state === 'playing') {
         const dx = this.input.consumeDeltaX() + this.input.getKeyAxis() * 10 * frameDt;
+        this.playTime += frameDt;
+        if (this.playTime > 1 && this.save.data.settings.sound && this.audio.isSuspended()) {
+          this.audioHint?.classList.remove('hidden');
+        }
         s.view.setIndicatorActive(this.input.isPointerDown());
         s.update(frameDt, dx, this.input.getAbsoluteTargetX());
         this.sfx.update(s.world, frameDt);

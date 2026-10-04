@@ -17,7 +17,10 @@ export class SfxDirector {
     const a = this.audio;
     switch (e.type) {
       case 'shotsFired':
-        a.play('shoot', { pitch: 1 + 0.08 * world.squad.weaponTier, volume: e.owner === 'hero' ? 0.7 : 1 });
+        a.play('shoot', {
+          pitch: 1 + 0.08 * world.squad.weaponTier,
+          volume: (e.owner === 'hero' ? 0.7 : 1) * 0.5,
+        });
         break;
       case 'blockCollected': {
         this.combo = world.time - this.lastPickup <= COMBO_WINDOW ? this.combo + 1 : 0;
@@ -56,8 +59,10 @@ export class SfxDirector {
         a.play('bossDie');
         break;
       case 'phaseChanged':
-        if (e.phase === 'victory') a.play('victory');
-        else if (e.phase === 'defeat') a.play('defeat');
+        if (e.phase === 'victory' || e.phase === 'defeat') {
+          a.duckMusic(1.2);
+          a.play(e.phase);
+        }
         break;
       default:
         break;

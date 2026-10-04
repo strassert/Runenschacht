@@ -73,7 +73,25 @@ export class SettingsScreen extends BaseScreen {
     clear(this.body);
     this.body.append(
       toggle('Soundeffekte', s.sound, (v) => this.cb.change({ sound: v })),
+      slider({
+        label: 'Effekt-Lautstärke',
+        min: 0,
+        max: 1,
+        step: 0.05,
+        value: s.sfxVolume,
+        format: (v) => `${Math.round(v * 100)} %`,
+        onChange: (v) => this.cb.change({ sfxVolume: v }),
+      }),
       toggle('Musik', s.music, (v) => this.cb.change({ music: v })),
+      slider({
+        label: 'Musik-Lautstärke',
+        min: 0,
+        max: 1,
+        step: 0.05,
+        value: s.musicVolume,
+        format: (v) => `${Math.round(v * 100)} %`,
+        onChange: (v) => this.cb.change({ musicVolume: v }),
+      }),
       toggle('Vibration', s.haptics, (v) => this.cb.change({ haptics: v })),
       toggle('Bewegung reduzieren', s.reducedMotion, (v) => this.cb.change({ reducedMotion: v })),
       toggle('Farbenblind-Modus', s.colorblind, (v) => this.cb.change({ colorblind: v })),

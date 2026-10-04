@@ -96,6 +96,8 @@ export class MusicPlayer {
       this.pad(ctx, t, root * 2, beat16 * 16);
       this.pad(ctx, t, root * 2 * SEMITONE_FIFTH, beat16 * 16);
     }
+    // Übergang in den Boss-Modus: Tom-Fill im letzten Viertel des Takts
+    if (this.pending === 'boss' && pos >= 12) this.tom(ctx, t, 200 - (pos - 12) * 25);
     if (mode === 'menu') {
       if (pos % 4 === 2) this.shaker(ctx, t, 0.03);
       return;

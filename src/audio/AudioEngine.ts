@@ -94,6 +94,20 @@ export class AudioEngine {
     this.applyVolumes();
   }
 
+  /** Senkt die Musik kurz auf 30 % (z. B. unter dem Sieg-/Niederlage-Jingle). */
+  duckMusic(seconds = 1): void {
+    const ctx = this.ctx;
+    const g = this.musicGain;
+    if (!ctx || !g || !this.musicEnabled) return;
+    const base = 0.35 * this.musicVolume;
+    const t = ctx.currentTime;
+    g.gain.cancelScheduledValues(t);
+    g.gain.setValueAtTime(g.gain.value, t);
+    g.gain.linearRampToValueAtTime(base * 0.3, t + 0.1);
+    g.gain.setValueAtTime(base * 0.3, t + seconds);
+    g.gain.linearRampToValueAtTime(base, t + seconds + 0.5);
+  }
+
   private applyVolumes(): void {
     if (this.sfxGain) this.sfxGain.gain.value = this.soundEnabled ? 0.7 * this.sfxVolume : 0;
     if (this.musicGain) this.musicGain.gain.value = this.musicEnabled ? 0.35 * this.musicVolume : 0;

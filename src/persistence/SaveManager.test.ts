@@ -51,6 +51,11 @@ describe('SaveManager', () => {
     expect(sanitizeSave({ settings: { controlMode: 'absolute' } }).settings.controlMode).toBe('absolute');
     expect(sanitizeSave({ settings: { controlMode: 'foo' } }).settings.controlMode).toBe('relative');
   });
+  it('clamps volume settings', () => {
+    const d = sanitizeSave({ settings: { sfxVolume: 5, musicVolume: -2 } });
+    expect(d.settings.sfxVolume).toBe(1);
+    expect(d.settings.musicVolume).toBe(0);
+  });
   it('rejects non-objects', () => {
     expect(sanitizeSave(42)).toEqual(defaultSave());
     expect(sanitizeSave(null)).toEqual(defaultSave());
