@@ -85,7 +85,7 @@ Gesamt: **86 Schritte**.
 
 ## Phase 7 – Audio & Effekte  ([phase-7-audio-fx.md](phase-7-audio-fx.md))
 
-- [ ] 7.1 – AudioEngine
+- [x] 7.1 – AudioEngine
 - [ ] 7.2 – Synthetisierte Soundeffekte
 - [ ] 7.3 – Musik
 - [ ] 7.4 – Partikel
