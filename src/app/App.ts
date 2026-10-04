@@ -63,6 +63,8 @@ export class App {
   private tipTimer = 0;
   private bossSlowLeft = 0;
   private flashEl: HTMLElement | null = null;
+  private wakeLock: WakeLockSentinel | null = null;
+  private frameCount = 0;
   private playTime = 0;
   private audioHint: HTMLElement | null = null;
   private slowActive = false;
@@ -122,6 +124,14 @@ export class App {
     document.addEventListener('visibilitychange', () => {
       if (document.hidden && this.machine.state === 'playing') this.pause();
     });
+    window.addEventListener('blur', () => {
+      if (this.machine.state === 'playing') this.pause();
+    });
+    window.addEventListener('pagehide', () => {
+      if (this.machine.state === 'playing') this.pause();
+    });
+    root.addEventListener('contextmenu', (e) => e.preventDefault());
+    this.machine.onChange((to) => void this.updateWakeLock(to === 'playing'));
 
     const vignette = h('div', { class: 'hit-vignette' });
     this.flashEl = h('div', { class: 'screen-flash' });
@@ -177,6 +187,10 @@ export class App {
     this.settings = new SettingsScreen({
       change: (patch) => this.changeSettings(patch),
       back: () => this.leaveSettings(),
+      fullscreen:
+        document.fullscreenEnabled && !window.matchMedia?.('(display-mode: standalone)').matches
+          ? () => void root.requestFullscreen?.().catch(() => undefined)
+          : undefined,
       resetTips: () => this.save.update((d) => (d.tutorialSeen = {})),
       resetProgress: () => {
         this.save.reset();
@@ -262,6 +276,23 @@ export class App {
 
   private isEndless(): boolean {
     return this.currentLevelId > 1000;
+  }
+
+  /** Bildschirm wach halten, solange gespielt wird (Fehler werden ignoriert). */
+  private async updateWakeLock(wanted: boolean): Promise<void> {
+    try {
+      if (wanted && !this.wakeLock && 'wakeLock' in navigator) {
+        this.wakeLock = await navigator.wakeLock.request('screen');
+        this.wakeLock.addEventListener('release', () => {
+          this.wakeLock = null;
+        });
+      } else if (!wanted && this.wakeLock) {
+        await this.wakeLock.release();
+        this.wakeLock = null;
+      }
+    } catch {
+      /* nicht unterstützt oder abgelehnt */
+    }
   }
 
   /** Render-Statistik (Draw Calls, Dreiecke, GPU-Speicher) für Debug und Messungen. */
@@ -600,7 +631,10 @@ export class App {
     }
     this.updateMusic();
     this.sky.position.copy(this.renderer.camera.position);
-    this.renderer.render();
+    // Akku schonen: in Menüs nur jedes zweite Bild zeichnen (30 FPS)
+    const inGame =
+      this.machine.state === 'playing' || this.machine.state === 'paused' || this.machine.state === 'result';
+    if (inGame || (this.frameCount++ & 1) === 0) this.renderer.render();
     if (this.fpsMeter) {
       const w = s?.world;
       const info = w

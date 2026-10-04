@@ -12,6 +12,7 @@ export class FeedbackDirector {
   readonly shake = new ScreenShake();
   private lossSum = 0;
   private lossStart = -10;
+  private lastPickupBuzz = -1;
 
   constructor(
     private readonly vignette: HTMLElement,
@@ -49,6 +50,15 @@ export class FeedbackDirector {
 
   onEvent(e: SimEvent, world: WorldState): void {
     switch (e.type) {
+      case 'blockCollected':
+        if (world.time - this.lastPickupBuzz >= 0.1) {
+          this.lastPickupBuzz = world.time;
+          this.vibrate(5);
+        }
+        break;
+      case 'cardUnlocked':
+        this.vibrate([20, 40, 60]);
+        break;
       case 'cardSmashed':
         this.addShake(0.4);
         this.vibrate(60);
@@ -64,7 +74,9 @@ export class FeedbackDirector {
       case 'gatePassed':
         if (e.after < e.before) {
           this.addShake(0.25);
-          this.vibrate(40);
+          this.vibrate([30, 30, 30]);
+        } else {
+          this.vibrate(15);
         }
         break;
       case 'soldiersChanged':

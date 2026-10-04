@@ -12,6 +12,8 @@ export interface SettingsCallbacks {
   back: () => void;
   resetProgress: () => void;
   resetTips: () => void;
+  /** Nur gesetzt, wenn Vollbild verfügbar ist. */
+  fullscreen?: () => void;
 }
 
 const QUALITY_OPTIONS: readonly (readonly [QualitySetting, string])[] = [
@@ -110,6 +112,7 @@ export class SettingsScreen extends BaseScreen {
       segmented('Steuerung', CONTROL_OPTIONS, s.controlMode, (v) => this.cb.change({ controlMode: v })),
       sensitivityPreview(() => this.sens),
       segmented('Grafikqualität', QUALITY_OPTIONS, s.quality, (v) => this.cb.change({ quality: v })),
+      ...(this.cb.fullscreen ? [button('Vollbild', () => this.cb.fullscreen?.(), 'ghost')] : []),
       button('Tipps zurücksetzen', () => this.cb.resetTips(), 'ghost'),
       button(
         'Fortschritt zurücksetzen',

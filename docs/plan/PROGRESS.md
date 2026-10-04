@@ -121,5 +121,5 @@ Gesamt: **86 Schritte**.
 - [x] 10.10 – Menü, Levelkarte und Shop verbessern
 - [x] 10.11 – Barrierefreiheit
 - [x] 10.12 – Audio-UX
-- [ ] 10.13 – Mobile-Feinschliff
+- [x] 10.13 – Mobile-Feinschliff
 - [ ] 10.14 – Abschluss-Review (Meilenstein M6)
