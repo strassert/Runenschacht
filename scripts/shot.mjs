@@ -31,6 +31,24 @@ page.on('console', (m) => logs.push(`[${m.type()}] ${m.text()}`));
 page.on('pageerror', (e) => logs.push(`[pageerror] ${e.message}`));
 await page.goto(base + url);
 await page.waitForTimeout(wait);
+// Optionale Aktionen: --actions "down:195,600;move:100,600;wait:500;up;key:ArrowLeft;click:195,400;shot:name.png"
+const actions = opt('actions', '');
+for (const raw of actions.split(';').filter(Boolean)) {
+  const [cmd, arg = ''] = raw.split(':');
+  const [ax, ay] = arg.split(',').map(Number);
+  if (cmd === 'down') {
+    await page.mouse.move(ax, ay);
+    await page.mouse.down();
+  } else if (cmd === 'move') await page.mouse.move(ax, ay, { steps: 8 });
+  else if (cmd === 'up') await page.mouse.up();
+  else if (cmd === 'click') await page.mouse.click(ax, ay);
+  else if (cmd === 'wait') await page.waitForTimeout(Number(arg));
+  else if (cmd === 'key') await page.keyboard.press(arg);
+  else if (cmd === 'keydown') await page.keyboard.down(arg);
+  else if (cmd === 'keyup') await page.keyboard.up(arg);
+  else if (cmd === 'shot') await page.screenshot({ path: arg });
+  else if (cmd === 'eval') console.info('eval:', JSON.stringify(await page.evaluate(arg)));
+}
 await page.screenshot({ path: out });
 await browser.close();
 const bad = logs.filter((l) => !l.startsWith('[log]') && !l.startsWith('[info]') && !l.startsWith('[debug]'));
