@@ -61,7 +61,7 @@ Gesamt: **86 Schritte**.
 - [x] 4.11 – Upgrade-Karten (CardView)
 - [x] 4.12 – Projektile (BulletView)
 - [x] 4.13 – Held und Boss
-- [ ] 4.14 – Umgebung (Dschungel, Klippen, Wasserfälle, Berge)
+- [x] 4.14 – Umgebung (Dschungel, Klippen, Wasserfälle, Berge)
 - [ ] 4.15 – WorldView, Zahlen-Label über dem Trupp, Meilenstein M2
 
 ## Phase 5 – Eingabe & Game-Loop (M3)  ([phase-5-input-loop.md](phase-5-input-loop.md))

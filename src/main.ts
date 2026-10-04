@@ -12,6 +12,7 @@ import { CardView } from './render/views/CardView';
 import { BulletView } from './render/views/BulletView';
 import { HeroView } from './render/views/HeroView';
 import { BossView } from './render/views/BossView';
+import { EnvironmentView } from './render/views/EnvironmentView';
 import { activateHero } from './core/systems/hero';
 import { Simulation } from './core/simulation';
 import { Bot } from './core/bot';
@@ -38,6 +39,8 @@ applyFog(r.scene);
 
 const level = getLevel(1)!;
 r.scene.add(new TrackView(level).root);
+const env = new EnvironmentView(level, 'medium');
+r.scene.add(env.root);
 const squadView = new SquadView(true);
 r.scene.add(squadView.root);
 
@@ -80,6 +83,7 @@ function frame(now: number): void {
   blockView.sync(sim.world);
   enemyView.sync(sim.world);
   gateView.sync(sim.world);
+  env.update(dt);
   cardView.sync(sim.world);
   bulletView.sync(sim.world, dt);
   heroView.sync(sim.world);
